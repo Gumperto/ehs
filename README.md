@@ -6,7 +6,9 @@ EHS is a scheduling CLI that works.
 
 # Table of contents
 [Build and run](#build-and-run)
+
 [Contributing](#contributing)
+
 [Special thanks](#special-thanks)
 
 # Build and run

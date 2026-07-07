@@ -6,6 +6,7 @@ are also some tips if you have never worked on a project like this before.
 
 # Table of contents
 [Project organization](#project-organization)
+
 [Header files](#header-files)
 
 # Project organization
@@ -34,16 +35,15 @@ it's convenient for us to not mix them up, because compilation
 can get very messy, and we want to shield ourselves from this vomit
 if it isn't necessary to know what's going on under the hood.
 
-[!TIP]
-You might ask: "Hey! How do I compile stuff now?" That's the neat
+> [!TIP]
+> You might ask: "Hey! How do I compile stuff now?" That's the neat
 part; you don't. Instead, you have this thing called a `Makefile`,
 which tells `gcc` what, where, and how to compile. All you have to
 do is, **at the top of the project directory (right under `ehs`)**,
 type `make`, and it will do the job. Typing `make clean` will clean
 the `build/` directory as well.
 
-[!TIP]
-You might ask again: "Hey! My IDE/text editor/LSP keeps yelling at
+> You might ask again: "Hey! My IDE/text editor/LSP keeps yelling at
 me about errors if they're not in the same file!" This can be a bit
 annoying because it depends on what LSP you're using, but if you're
 using `clangd` your LSP, and you have `bear`, you can run `bear -- 
@@ -103,8 +103,8 @@ int main() {
 }
 ```
 
-[!IMPORTANT]
-When creating your header file, be sure to use include guards (the
+> [!IMPORTANT]
+> When creating your header file, be sure to use include guards (the
 `#ifndef` stuff). Additionally, if you write more than one function
 inside of a code file, you must source them all in the header file.
 
@@ -133,8 +133,8 @@ ehs/
 └── ...
 ```
 
-[!WARNING]
-If, for example, you have code files `add.c`, `subtract.c`, etc, and 
+> [!WARNING]
+> If, for example, you have code files `add.c`, `subtract.c`, etc, and 
 their corresponding header files, and you need to include them in 
 a code file called `arithmetic.c`, when you include the header `arithmetic.h`
 in e.g `main.c`, nothing in the headers of `add.h`, `subtract.h`, etc,
