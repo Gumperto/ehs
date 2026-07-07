@@ -1,2 +1,5 @@
+compile_commands.json
 slides/presentation.pdf
+/build
+/.cache
 .DS_Store
