@@ -1,0 +1,11 @@
+The Courses.txt file should have all the necessary data to describe each course.
+The first number is the total number of courses
+Each line is structured like this:
+CourseName, run duration ,num_of_times, day, period, … credits, isRequired, category
+
+Q1 only courses are labeled “Q1 only”
+Q2 only courses are labeled “Q2 only”
+Full semester courses are labeled “Full Semester”
+Num_of_Times is simply the number of periods the class is held in each quarter 
+(Num_of_Times is 1 for Foundations of Statistics, 2 for Calculus A, 3 for Physics A, etc.)
+It is assumed that Full semester classes will be held in the same periods for both quarters.

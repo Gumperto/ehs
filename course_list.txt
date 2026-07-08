@@ -1,0 +1,3 @@
+2
+FoundationsOfStatistics, Full Semester, 1, Fri, 5, 2 Credits, Required, Math
+VectorCalculus,Q2 only, 2, Wed, 3, Fri, 1, 2 Credits, Not Required, Math
