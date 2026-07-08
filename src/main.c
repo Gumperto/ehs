@@ -13,12 +13,14 @@ int main() {
     // testing includes
     Course foundationsOfStatistics = {0};
     foundationsOfStatistics.title = (char*)malloc(MAX_LENGTH * sizeof(char));
+    foundationsOfStatistics.category = (char*)malloc(MAX_LENGTH * sizeof(char));
+
     strcpy(foundationsOfStatistics.title, "Foundations of Statistics");
-    foundationsOfStatistics.q1_timeheld[4][4] = 1;
-    foundationsOfStatistics.q2_timeheld[4][4] = 1;
+    strcpy(foundationsOfStatistics.category, "Math");
+    foundationsOfStatistics.q1_timeHeld[4][4] = 1;
+    foundationsOfStatistics.q2_timeHeld[4][4] = 1;
     foundationsOfStatistics.credits = 2;
     foundationsOfStatistics.isRequired = 1;
-    strcpy(foundationsOfStatistics.category, "Math");
     printf("Title: %s\n", foundationsOfStatistics.title);
 
     free(foundationsOfStatistics.title);
