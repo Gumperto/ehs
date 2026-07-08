@@ -27,6 +27,18 @@ typedef struct {
 }Schedule;
 
 
+//we should work on this thing next, all I did was open and close the file, should this be part of main?
+void readfile(char coursesTXT){
+    FILE *fptr;
+    fptr = fopen(coursesTXT,"r");
+    if(fptr == NULL){
+        printf("Error File not found\n");
+        return 0;
+    }
+    fclose(fptr);
+}
+
+
 void addRequired(Schedule sc, Course * class, int numCourses){
     for(int i = 0; i < numCourses; i++){
         if((class + i) -> isRequired == 1 ){
