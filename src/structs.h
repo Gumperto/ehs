@@ -14,7 +14,8 @@ typedef struct {
 * to do? like what benefit does it offer over just an
 * array of Course (i.e Course*)                    */
 typedef struct {
-    Course* courseList;
+    Course * courseList[6][6];
+    
 }Schedule;
 
 #endif
