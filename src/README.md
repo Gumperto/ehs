@@ -4,6 +4,9 @@ to the project, we expect you to read and follow a few guidelines as
 outlined below to ensure project consistency and ease-of-editing. There 
 are also some tips if you have never worked on a project like this before.
 
+Check out the [to-do list](./TODO.md) for a detailed list of what we
+want for the program.
+
 # Table of contents
 [Project organization](#project-organization)
 
@@ -43,6 +46,7 @@ do is, **at the top of the project directory (right under `ehs`)**,
 type `make`, and it will do the job. Typing `make clean` will clean
 the `build/` directory as well.
 
+> [!TIP]
 > You might ask again: "Hey! My IDE/text editor/LSP keeps yelling at
 me about errors if they're not in the same file!" This can be a bit
 annoying because it depends on what LSP you're using, but if you're
