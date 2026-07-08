@@ -24,6 +24,10 @@ typedef struct {
 typedef struct {
     Course * q1_courseList[6][6];
     Course * q2_courseList[6][6];
+    int saturday;
+    int period6;
+    int credits;
+    int target_credits;
 }Schedule;
 
 
@@ -40,19 +44,65 @@ void readfile(char * coursesTXT){
 
 
 void addRequired(Schedule sc, Course * class, int numCourses){
+    //I did flag to ensure I don't add credits twice for whole semester courses
+    int flag = 0;
     for(int i = 0; i < numCourses; i++){
         if((class + i) -> isRequired == 1 ){
             for(int j = 0; j < 6; j++){
                 for(int k = 0; k < 6; k++){
+                    flag = 0;
                     if(class[i].q1_timeheld[j][k] == 1){
                         sc.q1_courseList[j][k] = (class + i);
+                        flag = 1;
                     }
                     if(class[i].q2_timeheld[j][k] == 1){
                         sc.q2_courseList[j][k] = (class + i);
+                        flag = 1;
+                    }
+                    if(flag == 1){
+                        sc.credits += (class+1)->credits;
                     }
                 }
             }
         }
     }
 }
+
+void starter(Schedule sc){
+    printf("Welcome to the East Hokusai Course Registration Optimizer\n");
+    //call addRequired() here once we have an acutal course list
+    printf("We have added your required courses, which add up to %d credits. \n", sc.credits);
+    printf("How many credits would you like to get this semester? ");
+    scanf("%d",&(sc.target_credits));
+    printf("Would you like to take courses on Saturday? (y/n)");
+    char thing;
+    scanf("%c",&thing);
+    //we should change this to handle errors later
+    if(thing == 'y'){
+        sc.saturday = 1;
+    }else if (thing == 'n'){
+        sc.saturday = 0;
+    }
+    printf("Would you like to take courses on Period 6? (y/n)");
+    char thing;
+    scanf("%c",&thing);
+    //we should change this to handle errors later
+    if(thing == 'y'){
+        sc.period6 = 1;
+    }else if (thing == 'n'){
+        sc.period6 = 0;
+    }
+    while(sc.credits < sc.target_credits){
+    printf("What kind of courses would you like me to add?");
+    char preferred[50];
+    scanf("%s",&preferred);
+    int number_to_add = 0;
+    printf("How many of those kind of courses should I add? ");
+    scanf("%d",&number_to_add);
+    for(int i = 0; i < number_to_add; i++){
+        //add that kind of courses (We haven't created the functionality)
+    }
+    }
+}
 #endif
+
