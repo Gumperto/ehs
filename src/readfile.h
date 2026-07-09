@@ -1,6 +1,8 @@
 #ifndef READFILE
 #define READFILE
 
-void readfile(char* coursesTXT);
+#include "structs.h"
+void readfile(Schedule* schedule, char* coursesTXT);
+Course* createCourse(char* title, char* duration, char* meetings, int credit, int required, char* category);
 
 #endif
