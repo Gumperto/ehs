@@ -1,49 +1,112 @@
-// #include <stdio.h>
-// #include "structs.h"
-//
-// #define MAX_LENGTH 128
-//
-// int start(Schedule sc){
-//     printf("Welcome to the East Hokusai Course Registration Optimizer!\n");
-//     //call addRequired() here once we have an acutal course list
-//     // addRequired(sc);
-//     printf("We have added your required courses, which add up to %d credits. \n", sc.totalCredits);
-//     printf("How many credits would you like to get this semester? ");
-//     scanf("%d",&(sc.targetCredits));
-//
-//     printf("Would you like to take courses on Saturday? Default = n [y/n]:");
-//     char saturdayConfirmation;
-//     scanf("%c",&saturdayConfirmation);
-//     //we should change this to handle errors later
-//     if(saturdayConfirmation == 'y' || saturdayConfirmation == 'Y'){
-//         sc.saturday = 1;
-//     }else {
-//         sc.saturday = 0;
-//     }
-//     printf("Would you like to take courses on Period 6? Default = n [y/n]");
-//     char p6_confirmation;
-//     scanf("%c",&p6_confirmation);
-//     //we should change this to handle errors later
-//     if(p6_confirmation == 'y'){
-//         sc.period6 = 1;
-//     }else {
-//         sc.period6 = 0;
-//     }
-//
-//     // temporary implementation
-//     while(sc.totalCredits < sc.targetCredits){
-//         printf("What kind of courses would you like me to add?");
-//         // do we want fuzzy finding here?
-//         // or if it is picked from a preset 
-//         // list we can just let them choose
-//         char preferred[MAX_LENGTH];
-//         scanf("%s", preferred);
-//
-//         int number_to_add = 0;
-//         printf("How many of those kind of courses should I add? ");
-//         scanf("%d",&number_to_add);
-//         for(int i = 0; i < number_to_add; i++){
-//             //add that kind of courses (We haven't created the functionality)
-//         }
-//     }
-// }
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include "structs.h"
+#include "schedule.h"
+#include "readfile.h"
+#include "debugCMD.h"
+#include "conversion.h"
+
+#define MAX_LENGTH 256
+
+void fetchFilename(char* filename) {
+    printf("You are inputting filename manually.\n");
+    printf("Pro-tip: you can use cmdline arguments with ehs!\n");
+    printf("For example, type \n");
+    printf("$ ehs {filename}\n");
+    printf("to automatically use that argument as the filename!\n");
+    printf("Input filename manually: ");
+    scanf("%s", filename);
+}
+
+void resolveAvailabilityChecks(int* weekdayCheck, int* periodCheck) {
+    char temp[MAX_LENGTH];
+    char delimiter[] = " ";
+
+    // Read into periodCheck
+    printf("Input all periods you do not want to attend, separated by spaces: ");
+    fgets(temp, MAX_LENGTH, stdin);
+    temp[strcspn(temp, "\n")] = '\0';
+    
+    int increment = 0;
+    char* token = strtok(temp, delimiter);
+    while(token != NULL && increment < NUM_PERIODS) {
+        int numeric_period = atoi(token) - 1; // the -1 is index correction
+        printf("Getting rid of period '%s'\n", token);
+        if (numeric_period >= NUM_PERIODS || numeric_period < PERIOD_1) {
+            printf("Failure!\n");
+            token = strtok(NULL, delimiter);
+            continue;
+        }
+        printf("Success!\n");
+        periodCheck[numeric_period] = 0;
+        increment++; // add only after a valid check
+        token = strtok(NULL, delimiter);
+    }
+
+    // Read into weekdayCheck
+    printf("Input all weekdays you do not want to attend, separated by spaces: ");
+    fgets(temp, MAX_LENGTH, stdin);
+    temp[strcspn(temp, "\n")] = '\0';
+    
+    increment = 0;
+    token = strtok(temp, delimiter);
+    while(token != NULL && increment < NUM_WEEKDAYS) {
+        int numeric_weekday = stringWeekToNumber(token);
+        printf("Getting rid of weekday '%s'\n", token);
+        if (numeric_weekday < MONDAY || numeric_weekday >= NUM_WEEKDAYS) {
+            printf("Failure!\n");
+            token = strtok(NULL, delimiter);
+            continue;
+        }
+        printf("Success!\n");
+        weekdayCheck[numeric_weekday] = 0;
+        increment++;
+        token = strtok(NULL, delimiter);
+    }
+
+    printf("Days remaining: ");
+    for (int weekday = MONDAY; weekday < NUM_WEEKDAYS; weekday++)
+        if (weekdayCheck[weekday] == 1) printf("%s ", stringNumberToWeek(weekday));
+
+    printf("\n");
+
+    printf("Periods remaining: ");
+    for (int period = PERIOD_1; period < NUM_PERIODS; period++)
+        if (periodCheck[period] == 1) printf("%d ", period + 1);
+
+    printf("\n");
+}
+
+int starter(int argc, char** argv){
+    char filename[MAX_LENGTH];
+    int targetCredits;
+    int weekdayCheck[NUM_WEEKDAYS] = {1, 1, 1, 1, 1, 1};
+    int periodCheck[NUM_PERIODS] = {1, 1, 1, 1, 1, 1};
+
+    if (argc == 1) {
+        fetchFilename(filename);
+    }
+    else {
+        strcpy(filename, argv[1]);
+    }
+
+    CourseList* courseList = createCourseList();
+    if (courseList == NULL) return 1;
+
+    readfile(courseList, filename);
+
+    resolveAvailabilityChecks(weekdayCheck, periodCheck);
+    printf("How many credits are you aiming for this semester: ");
+    scanf("%d", &targetCredits);
+
+    Schedule* schedule = createSchedule(targetCredits, weekdayCheck, periodCheck);
+    if (courseList == NULL) return 1;
+
+    // addCourses();
+
+    freeCourseList(courseList);
+    freeSchedule(schedule);
+    
+    return 0;
+}
