@@ -1,29 +1,33 @@
 // IMPORTANT: please keep main.c as small as possible;
 // everything here is just placeholder as a proof of 
 // concept at the time being (I do mean EVERYTHING)
-
-#include <stdlib.h>
-#include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "structs.h"
+#include "readfile.h"
+#include "debugCMD.h"
 
 #define MAX_LENGTH 128
 
 int main() {
-    // testing includes
-    Course foundationsOfStatistics = {0};
-    foundationsOfStatistics.title = (char*)malloc(MAX_LENGTH * sizeof(char));
-    foundationsOfStatistics.category = (char*)malloc(MAX_LENGTH * sizeof(char));
+    Schedule* schedule = (Schedule*)malloc(sizeof(Schedule));
+    schedule->allocationLimit = ALLOCATION_LIMIT;
+    schedule->courseCountTotal = 0;
+    schedule->courseCountTaken = 0;
+    schedule->totalCredits = 0;
+    schedule->targetCredits = 2000;
 
-    strcpy(foundationsOfStatistics.title, "Foundations of Statistics");
-    strcpy(foundationsOfStatistics.category, "Math");
-    foundationsOfStatistics.q1_timeHeld[4][4] = 1;
-    foundationsOfStatistics.q2_timeHeld[4][4] = 1;
-    foundationsOfStatistics.credits = 2;
-    foundationsOfStatistics.isRequired = 1;
-    printf("Title: %s\n", foundationsOfStatistics.title);
+    schedule->saturdayCheck = 0;
+    schedule->period6Check = 0;
+    
+    char filename[MAX_LENGTH];
+    printf("What's the file name: ");
+    scanf("%s", filename);
+    
+    readfile(schedule, filename);
 
-    free(foundationsOfStatistics.title);
+    printGeneralScheduleInformation(schedule);
+    printFullCourseList(schedule);
 
     return 0;
 }
