@@ -6,6 +6,7 @@
 #include "structs.h"
 #include "readfile.h"
 #include "debugCMD.h"
+#include "chooseCourse.h"
 
 #define MAX_LENGTH 128
 
@@ -20,14 +21,16 @@ int main() {
     schedule->saturdayCheck = 0;
     schedule->period6Check = 0;
     
-    char filename[MAX_LENGTH];
-    printf("What's the file name: ");
-    scanf("%s", filename);
+    char filename[MAX_LENGTH] = "course_list.txt";
+    //printf("What's the file name: ");
+    //scanf("%s", filename);
     
     readfile(schedule, filename);
 
     printGeneralScheduleInformation(schedule);
     printFullCourseList(schedule);
-
+    printf("Course count is %d\n", schedule->courseCountTotal);
+    qsort(schedule -> courseList, schedule->courseCountTotal, sizeof(Course*), comp_credits);
+    printFullCourseList(schedule);
     return 0;
 }

@@ -18,6 +18,7 @@ void printFullCourseList(Schedule* schedule) {
         printf("Course credits: %d\n", course->credits);
         printf("Course required: %d\n", course->isRequired);
         printf("Course category: %s\n", course->category);
+        printf("Course address: %p\n", (void *)course);
 
         printf("Course schedule:\n");
         DuoList occurrenceList = course->meetings;

@@ -1,4 +1,14 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include "structs.h"
+
+int comp_credits(const void * a, const void * b){
+    printf("a is: %s \n",((Course *)a)->title);
+    printf("b is: %s \n",((Course *)b)->title);
+    printf("Address of a is: %p \n",a);
+    printf("Address of b is: %p \n",b);
+    return(((*(Course **)b)->credits)-((*(Course **)a)->credits));
+}
 
 // void addRequired(Schedule sc, Course * class, int numCourses){
 //     //I did flag to ensure I don't add credits twice for whole semester courses
@@ -25,8 +35,13 @@
 //     }
 // }
 
-void requiredCreditGreedy(Schedule* schedule) {
+
+
+
+
+//void requiredCreditGreedy(Schedule* schedule) {
     // addRequired();
     // then implement credit greedy on the rest
     // return
-}
+//}
+

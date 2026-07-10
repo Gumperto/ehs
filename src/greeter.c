@@ -1,4 +1,4 @@
-#include <stdio.h>
+/*#include <stdio.h>
 #include "structs.h"
 
 #define MAX_LENGTH 128
@@ -41,3 +41,4 @@ void starter(Schedule sc){
         }
     }
 }
+*/
