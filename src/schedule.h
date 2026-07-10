@@ -2,6 +2,6 @@
 #define SCHEDULE
 
 #include "structs.h"
-void addRequired(Schedule sc, Course * class, int numCourses);
+void requiredCreditGreedy(Schedule* schedule);
 
 #endif
