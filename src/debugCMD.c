@@ -1,6 +1,7 @@
 #include "debugCMD.h"
 #include <stdio.h>
 #include "structs.h"
+#include "conversion.h"
 
 typedef enum {
     PERIOD = 0,
@@ -24,17 +25,17 @@ void printFullCourseList(CourseList* courseList) {
         printf("Course category: %s\n", course->category);
 
         printf("Course schedule:\n");
-        DuoList occurrenceList = course->meetings;
-        for (int occurrenceIncrement = 0; occurrenceIncrement < occurrenceList.size; occurrenceIncrement++) {
-            printf("- Weekday: %d, Period: %d\n", occurrenceList.list[occurrenceIncrement].tuple[WEEKDAY],
-                                                  occurrenceList.list[occurrenceIncrement].tuple[PERIOD]);
+        DuoList* occurrenceList = course->meetings;
+        for (int occurrenceIncrement = 0; occurrenceIncrement < occurrenceList->size; occurrenceIncrement++) {
+            printf("- Weekday: %d, Period: %d\n", occurrenceList->list[occurrenceIncrement].tuple[WEEKDAY],
+                                                  occurrenceList->list[occurrenceIncrement].tuple[PERIOD]);
         }
         printf("\n");
     }
 }
 
 void printCourseSlotsMatrix(Schedule* schedule) {
-    for (int periods = 0; periods < NUM_PERIODS; periods++) {
+    for (int periods = PERIOD_1; periods < NUM_PERIODS; periods++) {
         printf("Period %d ", periods + 1);
         for (int weekdays = MONDAY; weekdays < NUM_WEEKDAYS; weekdays++) {
             for (int quarter = QUARTER_ONE; quarter < SEMESTER_DURATION; quarter++) {

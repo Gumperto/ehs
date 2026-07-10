@@ -9,16 +9,6 @@ typedef enum {
 }Tuple;
 
 typedef enum {
-    MONDAY = 0,
-    TUESDAY,
-    WEDNESDAY,
-    THURSDAY,
-    FRIDAY,
-    SATURDAY,
-    SUNDAY
-}Weekdays;
-
-typedef enum {
     QUARTER_ONE = 0,
     QUARTER_TWO = 1,
     SEMESTER_DURATION = 2,
@@ -39,7 +29,7 @@ typedef struct {
     char* title;
 
     // array of Duo's, showing what weekday and period the class takes place in
-    DuoList meetings;
+    DuoList* meetings;
     
     int credits;
 
@@ -64,12 +54,11 @@ typedef struct {
     Course* schedule[SEMESTER_DURATION][NUM_PERIODS][NUM_WEEKDAYS];
     size_t courseCountTaken;
 
-    // These two flags should probably be a placeholder
-    // for now. Ideally we want the user to pick what periods
-    // they don't want (1st period) and what days they don't 
-    // want (Saturday, Monday, etc)
-    int saturdayCheck;
-    int period6Check;
+    // 1 on an index means allowed, 0 means not allowed (Monday = 0)
+    int weekdayCheck[NUM_WEEKDAYS];
+
+    // 1 on an index means allowed, 0 means not allowed (Period 1 = 0)
+    int periodCheck[NUM_PERIODS];
 
     // How many credits have already been taken by this schedule arrangement?
     int totalCredits;

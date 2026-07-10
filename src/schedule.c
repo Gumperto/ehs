@@ -1,16 +1,35 @@
-#include "structs.h"
 #include <stdlib.h>
 #include <stdbool.h>
+#include "structs.h"
+#include "conversion.h"
 
 #define INITIAL_ALLOCATION_LIMIT 128
+
+// For DuoList
+
+void initDuoList(DuoList* list) {
+    list->list = NULL;
+    list->size = 0;
+}
+
+DuoList* createDuoList() {
+    DuoList* list = (DuoList*)malloc(sizeof(DuoList));
+    initDuoList(list);
+    return list;
+}
+
+void destroyDuoList(DuoList* list) {
+    if (list == NULL) return;
+    free(list->list);
+    free(list);
+}
 
 // For Course
 void initCourse(Course* course) {
     course->title = NULL;
 
     // DuoList
-    course->meetings.list = NULL;
-    course->meetings.size = 0;
+    course->meetings = NULL;
 
     // The rest
     course->credits = 0;
@@ -29,9 +48,8 @@ Course* createCourse() {
 
 void destroyCourse(Course* course) {
     if (course == NULL) return;
+    if (course->meetings != NULL) destroyDuoList(course->meetings);
     free(course->title);
-    // bit of an antipattern
-    free(course->meetings.list);
     free(course->category);
     free(course);
 }
@@ -51,6 +69,7 @@ CourseList* createCourseList() {
 }
 
 bool pushCourseList(CourseList* courseList, Course* course) {
+    if (course == NULL) return false;
     if (courseList->courseCountTotal == courseList->capacity) {
         if (courseList->capacity == 0) courseList->capacity = 4;
         size_t new_limit = courseList->capacity * 2;
@@ -92,11 +111,21 @@ void initSchedule(Schedule* schedule) {
     // Initialize number of courses taken this semester
     schedule->courseCountTaken = 0;
 
+    // Initialize all days being available
+    for (int weekday = MONDAY; weekday < NUM_WEEKDAYS; weekday++) {
+        schedule->weekdayCheck[weekday] = 1;
+    }
+
+    // Initialize all periods being available
+    for (int period = 0; period < NUM_PERIODS; period++) {
+        schedule->periodCheck[period] = 1;
+    }
+
     // Initialize totalCredits taken and targetCredits to take
     schedule->totalCredits = 0;
 }
 
-Schedule* createSchedule(int targetCredits, int saturdayCheck, int period6Check) {
+Schedule* createSchedule(int targetCredits, int* weekdayCheck, int* periodCheck) {
     Schedule* schedule = (Schedule*)malloc(sizeof(Schedule));
     if (schedule == NULL) return NULL;
 
@@ -104,9 +133,15 @@ Schedule* createSchedule(int targetCredits, int saturdayCheck, int period6Check)
 
     // Initialize necessary checks
     schedule->targetCredits = targetCredits;
-    schedule->saturdayCheck = saturdayCheck;
-    schedule->period6Check = period6Check;
     
+    for (int weekday = MONDAY; weekday < NUM_WEEKDAYS; weekday++) {
+        schedule->weekdayCheck[weekday] = weekdayCheck[weekday];
+    }
+
+    for (int period = 0; period < NUM_PERIODS; period++) {
+        schedule->periodCheck[period] = periodCheck[period];
+    }
+
     return schedule;
 }
 

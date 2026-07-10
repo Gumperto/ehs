@@ -4,36 +4,16 @@
 #include <string.h>
 #include "schedule.h"
 #include "structs.h"
+#include "conversion.h"
 
 #define MAX_LENGTH 512
 #define MAX_SIZE 16
-#define FIRST_COMPARISON_CHARS 3
 
 typedef enum {
     PERIOD = 0,
     WEEKDAY
 }OccurrenceIndex;
 
-int stringWeekToNumber(char* weekday) {
-    if (strncmp(weekday, "Mon", FIRST_COMPARISON_CHARS) == 0)
-        return MONDAY;
-    else if (strncmp(weekday, "Tue", FIRST_COMPARISON_CHARS) == 0)
-        return TUESDAY;
-    else if (strncmp(weekday, "Wed", FIRST_COMPARISON_CHARS) == 0)
-        return WEDNESDAY;
-    else if (strncmp(weekday, "Thu", FIRST_COMPARISON_CHARS) == 0)
-        return THURSDAY;
-    else if (strncmp(weekday, "Fri", FIRST_COMPARISON_CHARS) == 0)
-        return FRIDAY;
-    else if (strncmp(weekday, "Sat", FIRST_COMPARISON_CHARS) == 0)
-        return SATURDAY;
-    else if (strncmp(weekday, "Sun", FIRST_COMPARISON_CHARS) == 0)
-        return SUNDAY;
-    else {
-        printf("'%s' does not match with any known weekday! Exiting...\n", weekday);
-        exit(1);
-    }
-}
 
 void replaceAllOccurrencesOfChars(char* string, char* characterSet, char replacementChar) {
     int len = strlen(string);
@@ -76,11 +56,11 @@ void sanitizeString(char* string) {
 // Parse fake occurence dictionaries 
 // to a list of integers. For example:
 // [Wed: 3; Fri: 1] --> {[WEDNESDAY, 3], [FRIDAY, 1]}
-DuoList parseOccurrences(char* dictionary) {
+DuoList* parseOccurrences(char* dictionary) {
     // Remove all brackets from string
-    DuoList occurrenceList;
-    occurrenceList.list = (Duo*)malloc(MAX_SIZE * sizeof(Duo));
-    occurrenceList.size = 0;
+    DuoList* occurrenceList = createDuoList();
+    occurrenceList->list = (Duo*)malloc(MAX_SIZE * sizeof(Duo));
+    occurrenceList->size = 0;
     
     int increment = 0;
     char delimiters[] = ";";
@@ -91,11 +71,15 @@ DuoList parseOccurrences(char* dictionary) {
         char weekday[MAX_LENGTH];
         int period;
         sscanf(token, "%s %d", weekday, &period);
-        occurrenceList.list[increment].tuple[PERIOD] = period - 1; // index correction
-        occurrenceList.list[increment].tuple[WEEKDAY] = stringWeekToNumber(weekday);
+        int numeric_period = period - 1;
+        int numeric_weekend = stringWeekToNumber(weekday);
+        if (numeric_period >= NUM_PERIODS|| numeric_weekend >= NUM_WEEKDAYS) return NULL;
+
+        occurrenceList->list[increment].tuple[PERIOD] = numeric_period; // index correction
+        occurrenceList->list[increment].tuple[WEEKDAY] = numeric_weekend;
         token = strtok(NULL, delimiters);
         increment++;
-        occurrenceList.size++;
+        occurrenceList->size++;
     }
 
     return occurrenceList;
@@ -112,7 +96,8 @@ Course* setCourse(char* title, char* duration, char* meetings, int credit, int r
     strcpy(meetingsCopy, meetings);
 
     Duo durationDuo;
-    DuoList meetingsDuo = parseOccurrences(meetingsCopy);
+    DuoList* meetingsDuo = parseOccurrences(meetingsCopy);
+    if (meetingsDuo == NULL) return NULL;
 
     if (strcmp(duration, "Q1") == 0) {
         durationDuo.tuple[QUARTER_ONE] = 1;
@@ -233,7 +218,7 @@ void readfile(CourseList* courseList, char* coursesTXT){
         else {
             Course* course = setCourse(title, duration, meetings, credit, required, category);
             bool temp = pushCourseList(courseList, course);
-            if (temp == false) {
+            if (temp == false || course == NULL) {
                 printf("List not read correctly!\n");
                 exit(1);
             }
