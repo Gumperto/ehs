@@ -2,18 +2,22 @@
 #include <stdio.h>
 #include "structs.h"
 
+typedef enum {
+    PERIOD = 0,
+    WEEKDAY
+}OccurrenceIndex;
+
 void printGeneralScheduleInformation(Schedule* schedule) {
-    printf("Total courses in course list: %d\n", schedule->courseCountTotal);
-    printf("Total courses taken: %d\n", schedule->courseCountTaken);
+    printf("Total courses taken: %zu\n", schedule->courseCountTaken);
     printf("Total credits of taken courses: %d\n", schedule->totalCredits);
     printf("Target credit of this semester: %d\n", schedule->targetCredits);
     printf("\n");
 }
 
-void printFullCourseList(Schedule* schedule) {
-    for(int courseIncrement = 0; courseIncrement < schedule->courseCountTotal; courseIncrement++) {
-        Course* course = schedule->courseList[courseIncrement];
-        printf("Course no.: %d\n", courseIncrement);
+void printFullCourseList(CourseList* courseList) {
+    for(size_t courseIncrement = 0; courseIncrement < courseList->courseCountTotal; courseIncrement++) {
+        Course* course = courseList->courseList[courseIncrement];
+        printf("Course no.: %zu\n", courseIncrement);
         printf("Course title: %s\n", course->title);
         printf("Course credits: %d\n", course->credits);
         printf("Course required: %d\n", course->isRequired);

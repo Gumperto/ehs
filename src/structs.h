@@ -1,7 +1,8 @@
 #ifndef STRUCTS
 #define STRUCTS
 
-#define ALLOCATION_LIMIT 128
+#include <stddef.h>
+
 
 typedef enum {
     TWO = 2
@@ -54,11 +55,14 @@ typedef struct {
 typedef struct {
     // Stores the list of course pointers in memory
     Course** courseList;
-    int courseCountTotal;
+    size_t courseCountTotal;
+    size_t capacity;
+}CourseList;
 
+typedef struct {
     // Separate schedules for q1 and q2 so no collisions
     Course* schedule[SEMESTER_DURATION][NUM_PERIODS][NUM_WEEKDAYS];
-    int courseCountTaken;
+    size_t courseCountTaken;
 
     // These two flags should probably be a placeholder
     // for now. Ideally we want the user to pick what periods
@@ -67,10 +71,9 @@ typedef struct {
     int saturdayCheck;
     int period6Check;
 
+    // How many credits have already been taken by this schedule arrangement?
     int totalCredits;
     int targetCredits;
-
-    int allocationLimit;
 }Schedule;
 
 #endif

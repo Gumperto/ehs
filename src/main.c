@@ -6,28 +6,24 @@
 #include "structs.h"
 #include "readfile.h"
 #include "debugCMD.h"
+#include "schedule.h"
 
 #define MAX_LENGTH 128
 
 int main() {
-    Schedule* schedule = (Schedule*)malloc(sizeof(Schedule));
-    schedule->allocationLimit = ALLOCATION_LIMIT;
-    schedule->courseCountTotal = 0;
-    schedule->courseCountTaken = 0;
-    schedule->totalCredits = 0;
-    schedule->targetCredits = 2000;
-
-    schedule->saturdayCheck = 0;
-    schedule->period6Check = 0;
+    CourseList* courseList = createCourseList();
+    Schedule* schedule = createSchedule(20, 0, 0);
     
     char filename[MAX_LENGTH];
     printf("What's the file name: ");
     scanf("%s", filename);
     
-    readfile(schedule, filename);
+    readfile(courseList, filename);
 
-    printGeneralScheduleInformation(schedule);
-    printFullCourseList(schedule);
+    printFullCourseList(courseList);
+    printCourseSlotsMatrix(schedule);
+
+    freeCourseList(courseList);
 
     return 0;
 }

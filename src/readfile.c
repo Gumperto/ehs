@@ -2,9 +2,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "schedule.h"
 #include "structs.h"
 
-#define MAX_LENGTH 2048
+#define MAX_LENGTH 512
 #define MAX_SIZE 16
 #define FIRST_COMPARISON_CHARS 3
 
@@ -100,8 +101,8 @@ DuoList parseOccurrences(char* dictionary) {
     return occurrenceList;
 }
 
-Course* createCourse(char* title, char* duration, char* meetings, int credit, int required, char* category) {
-    Course* course = (Course*)malloc(sizeof(Course));
+Course* setCourse(char* title, char* duration, char* meetings, int credit, int required, char* category) {
+    Course* course = createCourse();
 
     // We need a copy here in case we pass the string argument directly into the function.
     // That's going to cause the original char* meetings to be a read-only string literal,
@@ -130,29 +131,17 @@ Course* createCourse(char* title, char* duration, char* meetings, int credit, in
         durationDuo.tuple[QUARTER_TWO] = 0;
     }
 
-    // Add title
     course->title = strdup(title);
-
-    // Add meetings
     course->meetings = meetingsDuo;
-
-    // Add credits
     course->credits = credit;
-    
-    // Add isRequired
     course->isRequired = required;
-
-    // Add takenCredit (unused, set to 0)
     course->takenCredit = 0;
-    
-    // Add category
     course->category = strdup(category);
-    
     return course;
 }
 
 // Read the file line by line
-void readfile(Schedule* schedule, char* coursesTXT){
+void readfile(CourseList* courseList, char* coursesTXT){
     FILE *fptr;
     fptr = fopen(coursesTXT,"r");
     if(fptr == NULL){
@@ -162,7 +151,6 @@ void readfile(Schedule* schedule, char* coursesTXT){
 
     int increment = 0;
     char line[MAX_LENGTH];
-    schedule->courseList = (Course**)malloc(sizeof(Course*) * schedule->allocationLimit);
 
     // Read the header row
     if (fgets(line, MAX_LENGTH, fptr) == NULL) {
@@ -238,21 +226,17 @@ void readfile(Schedule* schedule, char* coursesTXT){
 
         if (strcmp(title, "") == 0 ||  strcmp(duration, "") == 0 || strcmp(meetings, "") == 0 || 
             credit == -1 || required == -1 || strcmp(category, "") == 0) {
+            // ignores the row if anything is read incorrectly
             continue;
         }
 
         else {
-            Course* course = createCourse(title, duration, meetings, credit, required, category);
-            schedule->courseList[increment] = course;
-            schedule->courseCountTotal++;
-            increment++;
-        }
-        
-        // Realloc dataset if needed
-        if (schedule->courseCountTotal == schedule->allocationLimit) {
-            schedule->allocationLimit *= 2;
-            schedule->courseList = realloc(schedule->courseList, 
-                                           sizeof(Course*) * schedule->allocationLimit);       
+            Course* course = setCourse(title, duration, meetings, credit, required, category);
+            bool temp = pushCourseList(courseList, course);
+            if (temp == false) {
+                printf("List not read correctly!\n");
+                exit(1);
+            }
         }
     }
 
