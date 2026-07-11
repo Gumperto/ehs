@@ -145,6 +145,10 @@ Course* createCourse(char* title, char* duration, char* meetings, int credit, in
     // Add takenCredit (unused, set to 0)
     course->takenCredit = 0;
     
+    //Add to durationsDuo
+    course->durationsDuo[0] = durationsDuo[0];
+    course->durationsDuo[1] = durationsDuo[1];
+    
     // Add category
     course->category = strdup(category);
     
