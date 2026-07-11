@@ -81,8 +81,10 @@ DuoList* parseOccurrences(char* dictionary) {
 
 Course* setCourse(char* title, char* duration, char* meetings, int credit, int required, char* category) {
     Course* course = createCourse();
-    if (course == NULL || title == NULL || duration == NULL || meetings == NULL || category == NULL) 
+    if (course == NULL || title == NULL || duration == NULL || meetings == NULL || category == NULL) {
+        destroyCourse(course);
         return NULL;
+    }
 
     // We need a copy here in case we pass the string argument directly into the function.
     // That's going to cause the original char* meetings to be a read-only string literal,
@@ -93,7 +95,11 @@ Course* setCourse(char* title, char* duration, char* meetings, int credit, int r
 
     Duo durationDuo;
     DuoList* meetingsDuo = parseOccurrences(meetingsCopy);
-    if (meetingsDuo == NULL) return NULL;
+    if (meetingsDuo == NULL) {
+        fprintf(stderr, "Failed to parse meetings for course '%s'\n", course->title);
+        destroyCourse(course);
+        return NULL;
+    }
 
     if (strcmp(duration, "Q1") == 0) {
         durationDuo.tuple[QUARTER_ONE] = 1;
@@ -112,14 +118,19 @@ Course* setCourse(char* title, char* duration, char* meetings, int credit, int r
         return NULL;
     }
 
-    course->title = strdup(title);
     course->meetings = meetingsDuo;
+
+    course->title = strdup(title);
+    course->category = strdup(category);
+    if (course->title == NULL || course->category == NULL) {
+        destroyCourse(course);
+        return NULL;
+    }
     course->durationDuo.tuple[QUARTER_ONE] = durationDuo.tuple[QUARTER_ONE];
     course->durationDuo.tuple[QUARTER_TWO] = durationDuo.tuple[QUARTER_TWO];
     course->credits = credit;
     course->isRequired = required;
     course->takenCredit = 0;
-    course->category = strdup(category);
     return course;
 }
 

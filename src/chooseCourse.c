@@ -1,5 +1,4 @@
 #include <stdbool.h>
-#include <limits.h>
 #include "structs.h"
 
 // ==============
@@ -42,31 +41,24 @@ bool checkCourseEligibility(Schedule* schedule, Course* course) {
     return true;
 }
 
-bool addCourse(Schedule* schedule, Course* course) {
+bool addCourseToSchedule(Schedule* schedule, Course* course) {
     if (schedule == NULL || course == NULL) return false;
     if (checkCourseEligibility(schedule, course) == false) return false;
 
     for (int occurrenceIncrement = 0; occurrenceIncrement < course->meetings->size; occurrenceIncrement++) {
         for (int quarter = QUARTER_ONE; quarter < SEMESTER_DURATION; quarter++) {
             if (course->durationDuo.tuple[quarter] == 0) continue;
-            else {
-                int period = course->meetings->list[occurrenceIncrement].tuple[PERIOD];
-                int weekday = course->meetings->list[occurrenceIncrement].tuple[WEEKDAY];
-                schedule->schedule[quarter][period][weekday] = course;
-            }
+
+            int period = course->meetings->list[occurrenceIncrement].tuple[PERIOD];
+            int weekday = course->meetings->list[occurrenceIncrement].tuple[WEEKDAY];
+            schedule->schedule[quarter][period][weekday] = course;
         }
     }
+    
+    schedule->courseArray[schedule->courseCountTaken] = course;
+    schedule->courseCountTaken++;
+    schedule->totalCredits += course->credits;
     return true;
-}
-
-// =================
-// Algos & Fun stuff
-// =================
-
-int objectiveFunction(Schedule* schedule) {
-    int score = 0;
-    if (schedule->courseCountTaken == 0) return INT_MAX;
-    return score;
 }
 
 // void addRequired(Schedule sc, Course * class, int numCourses){
@@ -92,10 +84,4 @@ int objectiveFunction(Schedule* schedule) {
 //             }
 //         }
 //     }
-// }
-
-// void requiredCreditGreedy(Schedule* schedule) {
-    // addRequired();
-    // then implement credit greedy on the rest
-    // return
 // }

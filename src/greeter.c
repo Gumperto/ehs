@@ -119,12 +119,13 @@ int starter(int argc, char** argv){
     if (schedule == NULL) return 1;
 
     for (size_t i = 0; i < courseList->courseCountTotal; i++) {
-        addCourse(schedule, courseList->courseList[i]);
+        addCourseToSchedule(schedule, courseList->courseList[i]);
     }
 
     // addCourses();
     printFullCourseList(courseList);
     printCourseSlotsMatrix(schedule);
+    printCourseListInSchedule(schedule);
 
     freeCourseList(courseList);
     freeSchedule(schedule);

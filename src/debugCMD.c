@@ -19,12 +19,6 @@ void printCourseInformation(Course* course) {
     }
 }
 
-void printGeneralScheduleInformation(Schedule* schedule) {
-    printf("Total courses taken: %zu\n", schedule->courseCountTaken);
-    printf("Total credits of taken courses: %d\n", schedule->totalCredits);
-    printf("Target credit of this semester: %d\n", schedule->targetCredits);
-    printf("\n");
-}
 
 void printFullCourseList(CourseList* courseList) {
     for(size_t courseIncrement = 0; courseIncrement < courseList->courseCountTotal; courseIncrement++) {
@@ -33,6 +27,13 @@ void printFullCourseList(CourseList* courseList) {
         printCourseInformation(course);
         printf("\n");
     }
+}
+
+void printGeneralScheduleInformation(Schedule* schedule) {
+    printf("Total courses taken: %zu\n", schedule->courseCountTaken);
+    printf("Total credits of taken courses: %d\n", schedule->totalCredits);
+    printf("Target credit of this semester: %d\n", schedule->targetCredits);
+    printf("\n");
 }
 
 void printCourseSlotsMatrix(Schedule* schedule) {
@@ -59,4 +60,11 @@ void printCourseSlotsMatrix(Schedule* schedule) {
                 printf(" ~ ");
         }
     }
+}
+
+void printCourseListInSchedule(Schedule* schedule) {
+    for (size_t course = 0; course < schedule->courseCountTaken; course++) {
+        printf("Course %zu: '%s'\n", course, schedule->courseArray[course]->title);
+    }
+    printf("\n");
 }

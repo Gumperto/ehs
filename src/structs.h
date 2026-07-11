@@ -12,7 +12,8 @@ typedef enum {
     QUARTER_TWO = 1,
     SEMESTER_DURATION = 2,
     NUM_PERIODS = 6,
-    NUM_WEEKDAYS = 6
+    NUM_WEEKDAYS = 6,
+    MAX_COURSES = (SEMESTER_DURATION * NUM_PERIODS * NUM_WEEKDAYS)
 }ScheduleConstants;
 
 typedef enum {
@@ -66,6 +67,9 @@ typedef struct {
 
     // 1 on an index means allowed, 0 means not allowed (Period 1 = 0)
     int periodCheck[NUM_PERIODS];
+
+    // List of courses chosen for this schedule (not CourseList* because that owns the courses)
+    Course* courseArray[MAX_COURSES];
 
     // How many credits have already been taken by this schedule arrangement?
     int totalCredits;

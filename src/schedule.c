@@ -99,27 +99,29 @@ void freeCourseList(CourseList* courseList) {
 
 // For schedule
 void initSchedule(Schedule* schedule) {
-    // Initialize everything to NULL
-    for (int quarter = 0; quarter < SEMESTER_DURATION; quarter++) {
-        for (int period = 0; period < NUM_PERIODS; period++) {
-            for (int weekday = 0; weekday < NUM_WEEKDAYS; weekday++) {
+    // Initialize all slots to NULL
+    for (int quarter = QUARTER_ONE; quarter < SEMESTER_DURATION; quarter++) {
+        for (int period = PERIOD_1; period < NUM_PERIODS; period++) {
+            for (int weekday = MONDAY; weekday < NUM_WEEKDAYS; weekday++) {
                 schedule->schedule[quarter][period][weekday] = NULL;
             }
         }
     }
 
+    // Initialize all members of the course array to NULL
+    for (int course = 0; course < MAX_COURSES; course++)
+        schedule->courseArray[course] = NULL;
+
     // Initialize number of courses taken this semester
     schedule->courseCountTaken = 0;
 
     // Initialize all days being available
-    for (int weekday = MONDAY; weekday < NUM_WEEKDAYS; weekday++) {
+    for (int weekday = MONDAY; weekday < NUM_WEEKDAYS; weekday++)
         schedule->weekdayCheck[weekday] = 1;
-    }
 
     // Initialize all periods being available
-    for (int period = 0; period < NUM_PERIODS; period++) {
+    for (int period = 0; period < NUM_PERIODS; period++)
         schedule->periodCheck[period] = 1;
-    }
 
     // Initialize totalCredits taken and targetCredits to take
     schedule->totalCredits = 0;
