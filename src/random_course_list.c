@@ -82,12 +82,7 @@ void random_course_list(){
             fprintf(fptr, " %s ","Japanese Language");
         }
 
-
         fprintf(fptr, "\n");
     }
     fclose(fptr);
-}
-
-int main(void){
-    random_course_list();
 }
