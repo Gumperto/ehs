@@ -41,10 +41,10 @@ typedef struct {
     
     int credits;
 
-    //1 for required, 0 for not required
+    // 1 for required, 0 for not required
     int isRequired;
  
-    //1 for have taken in the past, 0 for not taken in the past (unused)
+    // 1 for have taken in the past, 0 for not taken in the past (unused)
     int takenCredit;
 
     char* category;
@@ -55,12 +55,14 @@ typedef struct {
     Course** courseList;
     size_t courseCountTotal;
     size_t capacity;
+    size_t requiredCourseTotal;
 }CourseList;
 
 typedef struct {
     // Separate schedules for q1 and q2 so no collisions
     Course* schedule[SEMESTER_DURATION][NUM_PERIODS][NUM_WEEKDAYS];
     size_t courseCountTaken;
+    size_t requiredCourseCount;
 
     // 1 on an index means allowed, 0 means not allowed (Monday = 0)
     int weekdayCheck[NUM_WEEKDAYS];

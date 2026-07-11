@@ -13,6 +13,7 @@
 #include "conversion.h"
 #include "greedy.h"
 #include "random_course_list.h"
+#include "objective.h"
 
 #define MAX_LENGTH 256
 
@@ -253,7 +254,11 @@ int starter(int argc, char** argv){
     if (schedule == NULL) return 1;
 
     maximizeCreditsDumb(schedule, courseList);
-    
+    printf("Objective of schedule: %lf\n", objective(schedule, courseList));
+
+    printGeneralCourseListInfo(courseList);
+
+    printGeneralScheduleInformation(schedule);    
     printCourseListInSchedule(schedule);
     printCourseSlotsMatrix(schedule);
 

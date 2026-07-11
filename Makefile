@@ -16,9 +16,9 @@ INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
 CPPFLAGS := $(INC_FLAGS) -MMD -MP -Werror -Wextra
 
-# Make executable ./build/connect_four_waseda from objects
+# Make executable ./build/ehs from objects
 $(BUILD_DIR)/$(EXEC): $(OBJS)
-	gcc $(OBJS) -o $@ $(LDFLAGS)
+	gcc $(OBJS) -o $@ $(LDFLAGS) -lm
 
 # Find all files that end in .c in ./build and make .o's out of them
 # and then dump them into a subdirectory named after the one they came from

@@ -2,6 +2,6 @@
 #define OBJECTIVE
 
 #include "structs.h"
-double objective(Schedule* schedule);
+double objective(Schedule* schedule, CourseList* courseList);
 
 #endif

@@ -29,10 +29,16 @@ void printFullCourseList(CourseList* courseList) {
     }
 }
 
+void printGeneralCourseListInfo(CourseList* courseList) {
+    printf("Total courses in courseList: %zu\n", courseList->courseCountTotal);
+    printf("Total required courses in courseList: %zu\n", courseList->requiredCourseTotal);
+}
+
 void printGeneralScheduleInformation(Schedule* schedule) {
     printf("Total courses taken: %zu\n", schedule->courseCountTaken);
     printf("Total credits of taken courses: %d\n", schedule->totalCredits);
     printf("Target credit of this semester: %d\n", schedule->targetCredits);
+    printf("Total required courses taken: %zu\n", schedule->requiredCourseCount);
     printf("\n");
 }
 

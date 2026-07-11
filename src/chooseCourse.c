@@ -56,6 +56,7 @@ bool addCourseToSchedule(Schedule* schedule, Course* course) {
     
     schedule->courseArray[schedule->courseCountTaken] = course;
     schedule->courseCountTaken++;
+    if (course->isRequired == 1) schedule->requiredCourseCount++;
     schedule->totalCredits += course->credits;
     return true;
 }

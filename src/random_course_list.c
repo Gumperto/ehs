@@ -4,6 +4,14 @@
 
 #define RANDOM_COURSE_NUMBER 128
 
+// produces p = 1/denominator bernoulli dist
+int bernoulli(int denominator) {
+    if (rand() % denominator == 0) {   // 9/10 → true, 1/10 → false (rand()%10 == 0)
+        return 1;
+    }
+    else return 0;
+}
+
 void random_course_list(char* random_file_name){
     FILE *fptr;
     srand(time(NULL));
@@ -75,9 +83,9 @@ void random_course_list(char* random_file_name){
         }
         fprintf(fptr, "], ");
 
-        // Credits
+        // Credits & Required
         int credits = rand()%5 + 1;
-        int required = rand()%2;
+        int required = bernoulli(5);
         fprintf(fptr, " %d, %d, ", credits, required);
 
         // Category

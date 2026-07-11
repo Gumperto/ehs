@@ -59,6 +59,7 @@ void initCourseList(CourseList* courseList) {
     courseList->courseList = NULL;
     courseList->courseCountTotal = 0;
     courseList->capacity = 0;
+    courseList->requiredCourseTotal = 0;
 }
 
 CourseList* createCourseList() {
@@ -80,6 +81,7 @@ bool pushCourseList(CourseList* courseList, Course* course) {
     }
     courseList->courseList[courseList->courseCountTotal] = course;
     courseList->courseCountTotal++;
+    if (course->isRequired == 1) courseList->requiredCourseTotal++;
     return true;
 }
 
@@ -114,6 +116,7 @@ void initSchedule(Schedule* schedule) {
 
     // Initialize number of courses taken this semester
     schedule->courseCountTaken = 0;
+    schedule->requiredCourseCount = 0;
 
     // Initialize all days being available
     for (int weekday = MONDAY; weekday < NUM_WEEKDAYS; weekday++)
