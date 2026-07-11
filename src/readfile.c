@@ -9,12 +9,6 @@
 #define MAX_LENGTH 512
 #define MAX_SIZE 16
 
-typedef enum {
-    PERIOD = 0,
-    WEEKDAY
-}OccurrenceIndex;
-
-
 void replaceAllOccurrencesOfChars(char* string, char* characterSet, char replacementChar) {
     int len = strlen(string);
     int len_characterSet = strlen(characterSet);
@@ -87,6 +81,8 @@ DuoList* parseOccurrences(char* dictionary) {
 
 Course* setCourse(char* title, char* duration, char* meetings, int credit, int required, char* category) {
     Course* course = createCourse();
+    if (course == NULL || title == NULL || duration == NULL || meetings == NULL || category == NULL) 
+        return NULL;
 
     // We need a copy here in case we pass the string argument directly into the function.
     // That's going to cause the original char* meetings to be a read-only string literal,
@@ -112,8 +108,8 @@ Course* setCourse(char* title, char* duration, char* meetings, int credit, int r
         durationDuo.tuple[QUARTER_TWO] = 1;
     }
     else {
-        durationDuo.tuple[QUARTER_ONE] = 0;
-        durationDuo.tuple[QUARTER_TWO] = 0;
+        destroyCourse(course);
+        return NULL;
     }
 
     course->title = strdup(title);

@@ -6,6 +6,7 @@
 #include "readfile.h"
 #include "debugCMD.h"
 #include "conversion.h"
+#include "chooseCourse.h"
 
 #define MAX_LENGTH 256
 
@@ -75,6 +76,8 @@ void resolveAvailabilityChecks(int* weekdayCheck, int* periodCheck) {
         token = strtok(NULL, delimiter);
     }
 
+    printf("\n");
+
     printf("Days remaining: ");
     for (int weekday = MONDAY; weekday < NUM_WEEKDAYS; weekday++)
         if (weekdayCheck[weekday] == 1) printf("%s ", stringNumberToWeek(weekday));
@@ -85,7 +88,7 @@ void resolveAvailabilityChecks(int* weekdayCheck, int* periodCheck) {
     for (int period = PERIOD_1; period < NUM_PERIODS; period++)
         if (periodCheck[period] == 1) printf("%d ", period + 1);
 
-    printf("\n");
+    printf("\n\n");
 }
 
 int starter(int argc, char** argv){
@@ -113,10 +116,15 @@ int starter(int argc, char** argv){
     scanf("%d", &targetCredits);
 
     Schedule* schedule = createSchedule(targetCredits, weekdayCheck, periodCheck);
-    if (courseList == NULL) return 1;
+    if (schedule == NULL) return 1;
+
+    for (size_t i = 0; i < courseList->courseCountTotal; i++) {
+        addCourse(schedule, courseList->courseList[i]);
+    }
 
     // addCourses();
     printFullCourseList(courseList);
+    printCourseSlotsMatrix(schedule);
 
     freeCourseList(courseList);
     freeSchedule(schedule);

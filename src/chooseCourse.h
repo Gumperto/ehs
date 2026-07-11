@@ -2,6 +2,9 @@
 #define CHOOSECOURSE
 
 #include "structs.h"
-void requiredCreditGreedy(Schedule* schedule);
+#include <stdbool.h>
+
+bool checkCourseEligibility(Schedule* schedule, Course* course);
+bool addCourse(Schedule* schedule, Course* course);
 
 #endif

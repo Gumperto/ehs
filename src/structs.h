@@ -3,7 +3,6 @@
 
 #include <stddef.h>
 
-
 typedef enum {
     TWO = 2
 }Tuple;
@@ -15,6 +14,11 @@ typedef enum {
     NUM_PERIODS = 6,
     NUM_WEEKDAYS = 6
 }ScheduleConstants;
+
+typedef enum {
+    PERIOD = 0,
+    WEEKDAY
+}OccurrenceIndex;
 
 typedef struct {
     int tuple[TWO];

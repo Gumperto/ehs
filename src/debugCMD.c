@@ -3,11 +3,6 @@
 #include "structs.h"
 #include "conversion.h"
 
-typedef enum {
-    PERIOD = 0,
-    WEEKDAY
-}OccurrenceIndex;
-
 void printCourseInformation(Course* course) {
     printf("Course title: %s\n", course->title);
     printf("Course credits: %d\n", course->credits);
