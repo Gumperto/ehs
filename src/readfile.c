@@ -118,6 +118,8 @@ Course* setCourse(char* title, char* duration, char* meetings, int credit, int r
 
     course->title = strdup(title);
     course->meetings = meetingsDuo;
+    course->durationDuo.tuple[QUARTER_ONE] = durationDuo.tuple[QUARTER_ONE];
+    course->durationDuo.tuple[QUARTER_TWO] = durationDuo.tuple[QUARTER_TWO];
     course->credits = credit;
     course->isRequired = required;
     course->takenCredit = 0;

@@ -8,6 +8,22 @@ typedef enum {
     WEEKDAY
 }OccurrenceIndex;
 
+void printCourseInformation(Course* course) {
+    printf("Course title: %s\n", course->title);
+    printf("Course credits: %d\n", course->credits);
+    printf("Course required: %d\n", course->isRequired);
+    printf("Course category: %s\n", course->category);
+    printf("Course duration: [%d, %d]\n", course->durationDuo.tuple[QUARTER_ONE],
+                                          course->durationDuo.tuple[QUARTER_TWO]);
+
+    printf("Course schedule:\n");
+    for (int occurrenceIncrement = 0; occurrenceIncrement < course->meetings->size; occurrenceIncrement++) {
+        int numeric_weekday = course->meetings->list[occurrenceIncrement].tuple[WEEKDAY];
+        int numeric_period = course->meetings->list[occurrenceIncrement].tuple[PERIOD] + 1;
+        printf("- Weekday: %s, Period: %d\n", stringNumberToWeek(numeric_weekday), numeric_period);
+    }
+}
+
 void printGeneralScheduleInformation(Schedule* schedule) {
     printf("Total courses taken: %zu\n", schedule->courseCountTaken);
     printf("Total credits of taken courses: %d\n", schedule->totalCredits);
@@ -19,17 +35,7 @@ void printFullCourseList(CourseList* courseList) {
     for(size_t courseIncrement = 0; courseIncrement < courseList->courseCountTotal; courseIncrement++) {
         Course* course = courseList->courseList[courseIncrement];
         printf("Course no.: %zu\n", courseIncrement);
-        printf("Course title: %s\n", course->title);
-        printf("Course credits: %d\n", course->credits);
-        printf("Course required: %d\n", course->isRequired);
-        printf("Course category: %s\n", course->category);
-
-        printf("Course schedule:\n");
-        DuoList* occurrenceList = course->meetings;
-        for (int occurrenceIncrement = 0; occurrenceIncrement < occurrenceList->size; occurrenceIncrement++) {
-            printf("- Weekday: %d, Period: %d\n", occurrenceList->list[occurrenceIncrement].tuple[WEEKDAY],
-                                                  occurrenceList->list[occurrenceIncrement].tuple[PERIOD]);
-        }
+        printCourseInformation(course);
         printf("\n");
     }
 }

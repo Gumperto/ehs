@@ -30,6 +30,9 @@ typedef struct {
 
     // array of Duo's, showing what weekday and period the class takes place in
     DuoList* meetings;
+
+    // duo that tracks the semester duration of a course
+    Duo durationDuo;
     
     int credits;
 

@@ -9,14 +9,24 @@
 
 #define MAX_LENGTH 256
 
-void fetchFilename(char* filename) {
+int fetchFilename(char* filename) {
+    int check;
+
     printf("You are inputting filename manually.\n");
     printf("Pro-tip: you can use cmdline arguments with ehs!\n");
-    printf("For example, type \n");
-    printf("$ ehs {filename}\n");
-    printf("to automatically use that argument as the filename!\n");
+    printf("For example, type \n\n");
+    printf("$ ehs {filename}\n\n");
+    printf("to automatically use that argument as the filename!\n\n");
     printf("Input filename manually: ");
-    scanf("%s", filename);
+
+    // Actually scan the filename
+    fgets(filename, MAX_LENGTH, stdin);
+    check = sscanf(filename, "%s", filename);
+    if (check != 1) {
+        printf("Please type at least one input.\n");
+        return 0;
+    }
+    return 1;
 }
 
 void resolveAvailabilityChecks(int* weekdayCheck, int* periodCheck) {
@@ -79,13 +89,15 @@ void resolveAvailabilityChecks(int* weekdayCheck, int* periodCheck) {
 }
 
 int starter(int argc, char** argv){
+    int inputCheck = 1;
     char filename[MAX_LENGTH];
     int targetCredits;
     int weekdayCheck[NUM_WEEKDAYS] = {1, 1, 1, 1, 1, 1};
     int periodCheck[NUM_PERIODS] = {1, 1, 1, 1, 1, 1};
 
     if (argc == 1) {
-        fetchFilename(filename);
+        inputCheck = fetchFilename(filename);
+        if (inputCheck == 0) return 1;
     }
     else {
         strcpy(filename, argv[1]);
@@ -104,6 +116,7 @@ int starter(int argc, char** argv){
     if (courseList == NULL) return 1;
 
     // addCourses();
+    printFullCourseList(courseList);
 
     freeCourseList(courseList);
     freeSchedule(schedule);
