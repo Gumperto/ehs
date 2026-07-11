@@ -17,11 +17,10 @@ bool checkCourseEligibility(Schedule* schedule, Course* course) {
         int checkPeriod = course->meetings->list[occurrenceIncrement].tuple[PERIOD];
         int checkWeekday = course->meetings->list[occurrenceIncrement].tuple[WEEKDAY];
 
-        // Do not add the course if it's NOT required
-        // **AND** falls on a bad day or bad period
-        if ((schedule->periodCheck[checkPeriod] == 0 && course->isRequired == 0) ||
-            (schedule->weekdayCheck[checkWeekday] == 0 && course->isRequired == 0))
-            return false;
+        // Maybe don't outright ban but punish heavily
+        // if ((schedule->periodCheck[checkPeriod] == 0 && course->isRequired == 0) ||
+        //     (schedule->weekdayCheck[checkWeekday] == 0 && course->isRequired == 0))
+        //     return false;
 
         // Do not add the course if it overlaps with a course 
         // that already occupied at least one of its meetings.
@@ -85,3 +84,9 @@ bool addCourseToSchedule(Schedule* schedule, Course* course) {
 //         }
 //     }
 // }
+
+//void requiredCreditGreedy(Schedule* schedule) {
+    // addRequired();
+    // then implement credit greedy on the rest
+    // return
+//}

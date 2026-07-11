@@ -6,7 +6,7 @@
 #include "readfile.h"
 #include "debugCMD.h"
 #include "conversion.h"
-#include "chooseCourse.h"
+#include "greedy.h"
 
 #define MAX_LENGTH 256
 
@@ -118,14 +118,13 @@ int starter(int argc, char** argv){
     Schedule* schedule = createSchedule(targetCredits, weekdayCheck, periodCheck);
     if (schedule == NULL) return 1;
 
-    for (size_t i = 0; i < courseList->courseCountTotal; i++) {
-        addCourseToSchedule(schedule, courseList->courseList[i]);
-    }
-
     // addCourses();
+    maximizeCreditsDumb(schedule, courseList);
+    
     printFullCourseList(courseList);
-    printCourseSlotsMatrix(schedule);
+
     printCourseListInSchedule(schedule);
+    printCourseSlotsMatrix(schedule);
 
     freeCourseList(courseList);
     freeSchedule(schedule);
