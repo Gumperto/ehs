@@ -36,30 +36,30 @@ void printGeneralScheduleInformation(Schedule* schedule) {
     printf("\n");
 }
 
-void printCourseSlotsMatrix(Schedule* schedule) {
-    for (int periods = PERIOD_1; periods < NUM_PERIODS; periods++) {
-        printf("Period %d ", periods + 1);
-        for (int weekdays = MONDAY; weekdays < NUM_WEEKDAYS; weekdays++) {
-            for (int quarter = QUARTER_ONE; quarter < SEMESTER_DURATION; quarter++) {
-                Course* printedCourse = schedule->schedule[quarter][periods][weekdays];
-                if (weekdays == NUM_WEEKDAYS - 1 && quarter == QUARTER_TWO) {
-                    if (printedCourse == NULL)
-                        printf("| (Empty) |\n");
-                    else
-                        printf("| %s |\n", schedule->schedule[quarter][periods][weekdays]->title);
-                }
+void printQuarterTable(Schedule *schedule, int quarter, const char *label) {
+    printf("=== %s ===\n", label);
+    printf("%-10s", "");
+    for (int weekday = MONDAY; weekday < NUM_WEEKDAYS; weekday++)
+        printf("%-35s", stringNumberToWeek(weekday));
+    printf("\n");
 
-                else {
-                    if (printedCourse == NULL)
-                        printf("| (Empty) |");
-                    else
-                        printf("| %s |", schedule->schedule[quarter][periods][weekdays]->title);
-                }
-            }
-            if (weekdays != NUM_WEEKDAYS - 1)
-                printf(" ~ ");
+    for (int period = PERIOD_1; period < NUM_PERIODS; period++) {
+        printf("Period %-3d", period + 1);
+        for (int weekday = MONDAY; weekday < NUM_WEEKDAYS; weekday++) {
+            Course* course = schedule->schedule[quarter][period][weekday];
+            if (course == NULL)
+                printf("%-35s", "(Empty)");
+            else
+                printf("%-35s", course->title);
         }
+        printf("\n");
     }
+    printf("\n");
+}
+
+void printCourseSlotsMatrix(Schedule *schedule) {
+    printQuarterTable(schedule, QUARTER_ONE, "Quarter 1");
+    printQuarterTable(schedule, QUARTER_TWO, "Quarter 2");
 }
 
 void printCourseListInSchedule(Schedule* schedule) {

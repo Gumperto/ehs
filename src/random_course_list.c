@@ -2,19 +2,29 @@
 #include <stdlib.h>
 #include <time.h>
 
-void random_course_list(){
+#define RANDOM_COURSE_NUMBER 128
+
+void random_course_list(char* random_file_name){
     FILE *fptr;
     srand(time(NULL));
+
     char first_word[10][30] = {"Introduction to ","Analysis of ","Help me ","Eating ","Advanced ","Intermediate ","History of ","Fries with ","Basics of ","Critiques of "};
     char second_word[10][30] = {"Touhou","Dolphin","えーりん","星街すいせい","Pickle","コダック","Perfect Math Class","Kuril Islands","Madoka","Van Lang"};
-    fptr = fopen("random_courses.txt","w");
-    for(int i = 0; i < 100; i++){
+
+    fptr = fopen(random_file_name,"w");
+
+    for(int i = 0; i < RANDOM_COURSE_NUMBER; i++){
+        // Title
         int first = rand()%10;
         int second = rand()%10;
+
         fprintf(fptr, "%s",first_word[first]);
         fprintf(fptr, "%s",second_word[second]);
         fprintf(fptr, ", ");
+
+        // Duration
         int duration = rand()%3;
+
         if(duration == 0){
             fprintf(fptr, "Semester, ");
         }else if (duration == 1){
@@ -22,8 +32,13 @@ void random_course_list(){
         }else{
             fprintf(fptr, "Q2, ");
         }
+
+        // Frequency
         int frequency = rand()%3 + 1;
-        int periods_considered [frequency];
+        fprintf(fptr, "%d, ", frequency);
+
+        int periods_considered[frequency];
+
         for(int j = 0; j < frequency; j++){
             int is_same = 0;
             while(is_same == 0){
@@ -36,6 +51,7 @@ void random_course_list(){
                 }
             }
         }
+
         fprintf(fptr, "[");
         for(int k = 0; k < frequency; k++){
             int day = periods_considered[k]/6;
@@ -59,9 +75,12 @@ void random_course_list(){
         }
         fprintf(fptr, "], ");
 
+        // Credits
         int credits = rand()%5 + 1;
-        fprintf(fptr, " %d, %d, ", credits, rand()%2);
+        int required = rand()%2;
+        fprintf(fptr, " %d, %d, ", credits, required);
 
+        // Category
         int cat = rand()%8;
 
         if(cat == 0){
