@@ -1,6 +1,6 @@
 CourseName,                 Duration, WeeklyFrequency, Occurrences,      Credits,   isRequired, category
-FoundationsOfStatistics,    Semester, 1,               [Fri: 5],         2,         1,          Math
 VectorCalculus,             Q2,       2,               [Wed: 3; Fri: 1], 2,         0,          Math
+FoundationsOfStatistics,    Semester, 1,               [Fri: 5],         2,         1,          Math
 InformationTheory,          Semester, 1,               [Wed: 5],         2,         1,          Math
 Ancient&MedievalPhilosophy, Semester, 1,               [Wed: 4],         2,         0,          Humanities
 IntroToComps&Nets,          Semester, 1,               [Wed: 3],         2,         1,          CSCE
