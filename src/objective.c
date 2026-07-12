@@ -5,13 +5,14 @@
 #include "structs.h"
 #include "conversion.h"
 
-#define ASTRONOMICAL_PENALTY 100000
+#define ASTRONOMICAL_PENALTY 1000000
 
 #define EXTRENELY_BAD_PENALTY 1000
 #define REALLY_BAD_PENALTY 500
 #define BAD_PENALTY 300
 #define MILD_PENALTY 100
 
+#define POINTLESS_PERIOD_COUNT 1
 #define BAD_PERIOD_COUNT 3
 
 double gapPenalty(Schedule* schedule) {
@@ -95,8 +96,8 @@ double badSlotPenalty(Schedule* schedule) {
 double requirementPenalty(Schedule* schedule, CourseList* courseList) {
     double penalty = 0;
 
-    // division by 4 to roughly estimate 4 years of college
-    int distance = (int)courseList->requiredCourseTotal / 4 - (int)schedule->requiredCourseCount; 
+    // division by 8 to roughly estimate 8 semesters = 4 years * 2 semesters/year of college
+    double distance = (double)courseList->requiredCourseTotal / 8.0 - (double)schedule->requiredCourseCount; 
     if (distance < 0) penalty = 0;
     else penalty = BAD_PENALTY * distance * distance;
 
@@ -105,7 +106,7 @@ double requirementPenalty(Schedule* schedule, CourseList* courseList) {
     return penalty;
 }
 
-double burnoutPenalty(Schedule* schedule) {
+double courseCountPenalty(Schedule* schedule) {
     double penalty = 0;
     for (int q = QUARTER_ONE; q < SEMESTER_DURATION; q++) {
         for (int wd = MONDAY; wd < NUM_WEEKDAYS; wd++) {
@@ -114,10 +115,11 @@ double burnoutPenalty(Schedule* schedule) {
                 if (schedule->schedule[q][p][wd] != NULL)
                     periodCount++;
             }
-            if (periodCount > BAD_PERIOD_COUNT) penalty += pow(2, periodCount - BAD_PERIOD_COUNT) * REALLY_BAD_PENALTY;
+                if (periodCount == POINTLESS_PERIOD_COUNT) penalty += BAD_PENALTY;
+                else if (periodCount > BAD_PERIOD_COUNT) penalty += pow(2, periodCount - BAD_PERIOD_COUNT) * REALLY_BAD_PENALTY;
         }
     }
-    printf("burnoutPenalty: %lf\n", penalty);
+    printf("courseCountPenalty: %lf\n", penalty);
     return penalty;
 }
 
@@ -129,11 +131,11 @@ double burnoutPenalty(Schedule* schedule) {
 * - Under/over credit: plus/minus 2 away from desired credit is low penalty, higher penalty as you move away
 * - Class in a user-designated bad period: very bad penalty, scales o(superlinearly) 
 *                                          with amount of classes in bad periods 
-* - Not taking all required credits: not sure about this. The isRequired flag means required for graduation
-*                                    not necessarily for the current semester. Maybe it should ask user how
-*                                    many required credits they feel like they need to take? And then do
-*                                    something similar to under/over credit. Feels a bit tired from a novelty POV
-* - If >3 slots taken in a day: exponential penalty for each credit exceeding this, I *know* how terrible this is */
+* - Not taking all required credits: quadratic penalty if lacking, no penalty else. estimates the number of 
+*                                    required courses aimed for in a semester over 4 years is total number of 
+*                                    required courses / 8. This difference is squared and then multiplied with BAD_PENALTY
+* - 1 slot taken in a day or >3 taken in a day: only 1 slot taken: BAD_PENALTY
+*                                               >3 slot taken: exponential penalty for each course over the 3rd, I *know* how terrible this is */
 double objective(Schedule* schedule, CourseList* courseList) {
     double score = 0;
     if (schedule->courseCountTaken == 0 || schedule->totalCredits == 0)
@@ -144,7 +146,7 @@ double objective(Schedule* schedule, CourseList* courseList) {
     score += creditDivergencePenalty(schedule);
     score += badSlotPenalty(schedule);
     score += requirementPenalty(schedule, courseList);
-    score += burnoutPenalty(schedule);
+    score += courseCountPenalty(schedule);
 
     return score;
 }

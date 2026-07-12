@@ -3,6 +3,8 @@
 
 #include <stddef.h>
 
+#define RANDOM_COURSE_NUMBER 128
+
 typedef enum {
     TWO = 2
 }Tuple;

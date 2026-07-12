@@ -37,7 +37,7 @@ int fetchFilename(char** argv, char* filename) {
     printf("Input filename manually: ");
 
     // Actually scan the filename
-    fgets(filename, MAX_LENGTH, stdin);
+    fgets(filename, MAX_LENGTH - 1, stdin);
     check = sscanf(filename, "%s", filename);
     if (check != 1) {
         printf("Please type at least one input.\n");
@@ -109,16 +109,33 @@ void resolveAvailabilityChecks(int* weekdayCheck, int* periodCheck) {
     printf("\n\n");
 }
 
-int starter(int argc, char** argv){
-    int opt;
+int fetchTargetCredits(CourseList* courseList) {
+    int targetCredits = -1;
+    char buffer[MAX_LENGTH];
+    printf("How many credits are you aiming for this semester: ");
+    
+    // Actually scan the target credits
+    fgets(buffer, MAX_LENGTH - 1, stdin);
+    int check = sscanf(buffer, "%d", &targetCredits);
 
-    char filename[MAX_LENGTH];
+    // If no input was given or if the input sucks
+    if (check != 1) {
+        int courseCap = min(courseList->courseCountTotal, RANDOM_COURSE_NUMBER);
+        int totalCreditsInCourseList = 0;
+        for (int course = 0; course < courseCap; course++)
+            totalCreditsInCourseList += courseList->courseList[course]->credits;
+
+        // 8 semesters
+        targetCredits = totalCreditsInCourseList / 8;
+
+        printf("Using very rough estimate: %d\n\n", targetCredits);
+    }
+
+    return targetCredits;
+}
+
+bool cmdlineGet(int argc, char** argv, char* filename) {
     char random_file_name[] = "random_courses.txt";
-
-    int targetCredits;
-    int weekdayCheck[NUM_WEEKDAYS] = {1, 1, 1, 1, 1, 1};
-    int periodCheck[NUM_PERIODS] = {1, 1, 1, 1, 1, 1};
-
     int inputCheck = 1;
 
     #ifdef __unix__
@@ -165,9 +182,9 @@ int starter(int argc, char** argv){
                     printf("$ %s [--help] [--data=path] [--random_generated=seed]\n",
                             argv[0]);
                     printf("GUIDE: ");
-                    printf("\t%-25s: %-25s\n", "--help OR --h", "print this menu");
-                    printf("\t%-25s: %-25s\n", "--data OR --d [path]", "required; tells ehs what file to read");
-                    printf("\t%-25s: %-25s\n", "--random-gen OR --r [seed]", "optional; randomly generates a file and reads it");
+                    printf("\t%-28s: %-28s\n", "--help OR --h", "print this menu");
+                    printf("\t%-28s: %-28s\n", "--data OR --d [path]", "required; tells ehs what file to read");
+                    printf("\t%-28s: %-28s\n", "--random-gen OR --r [seed]", "optional; randomly generates a file and reads it");
                     helpFlag = 1;
                     break;
                 
@@ -207,48 +224,70 @@ int starter(int argc, char** argv){
              }
         }
 
-        if (helpFlag == 1 || errFlag == 1) return 1;
-
-        if (randomFlag == 1) {
-            random_course_list(random_file_name);
-            strcpy(filename, random_file_name);
-        }
-        
-        if (nameFlag != 1 && randomFlag != 1) {
-            inputCheck = fetchFilename(argv, filename);
-            if (inputCheck == 0) return 1;
+        if (helpFlag == 1 || errFlag == 1) return false;
+        else {
+            if (randomFlag == 1) {
+                random_course_list(RANDOM_COURSE_NUMBER, random_file_name);
+                strcpy(filename, random_file_name);
+                return true;
+            }
+            
+            else {
+                if (nameFlag != 1) {
+                    inputCheck = fetchFilename(argv, filename);
+                    if (inputCheck == 0) return false;
+                    return true;
+                }        
+                else return true;
+            }
         }
 
         #else
             if (argc == 1) {
                 // fetchFilename modifies the argument directly
                 inputCheck = fetchFilename(argv, filename);
-                if (inputCheck == 0) return 1;
+                if (inputCheck == 0) return false;
             }
             else if (argc == 2) {
+                if (argv[1] == NULL) return false;
                 strcpy(filename, argv[1]);
+                return true;
             }
             
             else {
+                if (argv[1] == NULL) return false;
                 strcpy(filename, argv[1]);
                 if (strncmp(argv[2], "random", 4) == 0) {
                     random_course_list(random_file_name);
                     strcpy(filename, random_file_name);
                 }
+                
+                return true;
             }
     #endif
+
+    fprintf(stderr, "This shouldn't happen! Report this bug to github.com/Gumperto/ehs if it does!\n");
+    return false;
+}
+
+int starter(int argc, char** argv){
+    char filename[MAX_LENGTH];
+    int targetCredits;
+
+    int weekdayCheck[NUM_WEEKDAYS] = {1, 1, 1, 1, 1, 1};
+    int periodCheck[NUM_PERIODS] = {1, 1, 1, 1, 1, 1};
+
+    if (cmdlineGet(argc, argv, filename) == false) return 1;
 
     CourseList* courseList = createCourseList();
     if (courseList == NULL) return 1;
 
     printf("Reading from file: %s\n", filename);
 
-
     readfile(courseList, filename);
 
     resolveAvailabilityChecks(weekdayCheck, periodCheck);
-    printf("How many credits are you aiming for this semester: ");
-    scanf("%d", &targetCredits);
+    targetCredits = fetchTargetCredits(courseList);
 
     Schedule* schedule = createSchedule(targetCredits, weekdayCheck, periodCheck);
     if (schedule == NULL) return 1;

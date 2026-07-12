@@ -1,33 +1,66 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include "structs.h"
 
-#define RANDOM_COURSE_NUMBER 128
+#define MAX_LENGTH 32
+
+int min(int a, int b) {
+    if (a > b) return b;
+    else return a;
+}
 
 // produces p = 1/denominator bernoulli dist
 int bernoulli(int denominator) {
-    if (rand() % denominator == 0) {   // 9/10 → true, 1/10 → false (rand()%10 == 0)
+    if (rand() % denominator == 0) {   // 1 - 1/denominator -> false, 1/denominator -> true
         return 1;
     }
     else return 0;
 }
 
-void random_course_list(char* random_file_name){
+void random_course_list(int samples, char* random_file_name){
     FILE *fptr;
     srand(time(NULL));
-    char first_word[10][30] = {"Introduction to ","Analysis of ","Help me ","Eating ","Advanced ","Intermediate ","History of ","Cirno's Perfect ","Basics of ","Critiques of "};
-    char second_word[10][30] = {"Touhou","Dolphin","Eirin","Suisei","Pickle","Psyduck","Perfect Math Class","Kuril Islands","Madoka","Van Lang"};
-    fptr = fopen("random_courses.txt","w");
+    char first_word[][MAX_LENGTH] = {
+        "Introduction to ",
+        "Analysis of ",
+        "Help me ",
+        "Eating ",
+        "Advanced ",
+        "Intermediate ",
+        "History of ",
+        "Cirno's Perfect ",
+        "Basics of ",
+        "Critiques of "
+    };
+
+    char second_word[][MAX_LENGTH] = {
+        "Touhou",
+        "Dolphin",
+        "Eirin",
+        "Suisei",
+        "Pickle",
+        "Psyduck",
+        "Perfect Math Class",
+        "Kuril Islands",
+        "Madoka",
+        "Van Lang", 
+        "ArchBtw"
+    };
 
     fptr = fopen(random_file_name,"w");
 
-    for(int i = 0; i < RANDOM_COURSE_NUMBER; i++){
+    int requiredSoFar = 0;
+    int requiredCap = min(samples, RANDOM_COURSE_NUMBER);
+    if (requiredCap == RANDOM_COURSE_NUMBER) requiredCap /= 5;
+
+    for(int i = 0; i < samples; i++){
         // Title
         int first = rand()%10;
         int second = rand()%10;
 
-        fprintf(fptr, "%s",first_word[first]);
-        fprintf(fptr, "%s",second_word[second]);
+        fprintf(fptr, "%s", first_word[first]);
+        fprintf(fptr, "%s", second_word[second]);
         fprintf(fptr, ", ");
 
         // Duration
@@ -83,9 +116,12 @@ void random_course_list(char* random_file_name){
         }
         fprintf(fptr, "], ");
 
-        // Credits & Required
-        int credits = rand()%5 + 1;
-        int required = bernoulli(5);
+        // Credits
+        int credits = rand()%4 + 1;
+        // Required at a 1/5 probability
+        int required = 0;
+        if (requiredCap > requiredSoFar)
+            required = bernoulli(5);
         fprintf(fptr, " %d, %d, ", credits, required);
 
         // Category

@@ -1,6 +1,7 @@
 #ifndef RANDOMCOURSELIST
 #define RANDOMCOURSELIST
 
-void random_course_list(char* random_file_name);
+int min(int a, int b);
+void random_course_list(int samples, char* random_file_name);
 
 #endif
