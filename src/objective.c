@@ -97,7 +97,7 @@ double requirementPenalty(Schedule* schedule, CourseList* courseList) {
     double penalty = 0;
 
     // division by 8 to roughly estimate 8 semesters = 4 years * 2 semesters/year of college
-    double distance = (double)courseList->requiredCourseTotal / 8.0 - (double)schedule->requiredCourseCount; 
+    int distance = (int)courseList->requiredCourseTotal / 8 - (int)schedule->requiredCourseCount; 
     if (distance < 0) penalty = 0;
     else penalty = BAD_PENALTY * distance * distance;
 
@@ -116,7 +116,7 @@ double courseCountPenalty(Schedule* schedule) {
                     periodCount++;
             }
                 if (periodCount == POINTLESS_PERIOD_COUNT) penalty += BAD_PENALTY;
-                else if (periodCount > BAD_PERIOD_COUNT) penalty += pow(2, periodCount - BAD_PERIOD_COUNT) * REALLY_BAD_PENALTY;
+                else if (periodCount > BAD_PERIOD_COUNT) penalty += pow(10, periodCount - BAD_PERIOD_COUNT) * REALLY_BAD_PENALTY;
         }
     }
     printf("courseCountPenalty: %lf\n", penalty);
