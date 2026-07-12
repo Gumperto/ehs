@@ -55,5 +55,8 @@ Thank you for using East Hokusai Services.
 
 We have providing high quality data analysis services since 2026.
 
+Thanks to [Muhammad Noor Fawi](https://github.com/MNoorFawi) for
+inspiring the design of the simulated annealing algorithm.
+
 We extend our thanks to our family, friends, and our close business
 partner Dr. Zomboss (formerly West Hokusai Group).
