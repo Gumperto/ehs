@@ -8,6 +8,9 @@
 bool checkCourseEligibility(Schedule* schedule, Course* course) {
     if (schedule == NULL || course == NULL) return false;
 
+    // not added
+    // if (schedule->isFull == 1) return false;
+
     // initial filtering
     int takenCredit = course->takenCredit;
     if (takenCredit == 1) return false;
@@ -16,11 +19,6 @@ bool checkCourseEligibility(Schedule* schedule, Course* course) {
         // Initialize some check variables
         int checkPeriod = course->meetings->list[occurrenceIncrement].tuple[PERIOD];
         int checkWeekday = course->meetings->list[occurrenceIncrement].tuple[WEEKDAY];
-
-        // Maybe don't outright ban but punish heavily
-        // if ((schedule->periodCheck[checkPeriod] == 0 && course->isRequired == 0) ||
-        //     (schedule->weekdayCheck[checkWeekday] == 0 && course->isRequired == 0))
-        //     return false;
 
         // Do not add the course if it overlaps with a course 
         // that already occupied at least one of its meetings.
@@ -32,11 +30,7 @@ bool checkCourseEligibility(Schedule* schedule, Course* course) {
                     return false;
             }
         }
-
-        // not added
-        // if (schedule->isFull == 1) return false;
     }
-
     return true;
 }
 
@@ -60,34 +54,3 @@ bool addCourseToSchedule(Schedule* schedule, Course* course) {
     schedule->totalCredits += course->credits;
     return true;
 }
-
-// void addRequired(Schedule sc, Course * class, int numCourses){
-//     //I did flag to ensure I don't add credits twice for whole semester courses
-//     int flag = 0;
-//     for(int i = 0; i < numCourses; i++){
-//         if((class + i) -> isRequired == 1 ){
-//             for(int j = 0; j < NUM_PERIODS; j++){
-//                 for(int k = 0; k < NUM_WEEKDAYS; k++){
-//                     flag = 0;
-//                     if(class[i].q1_timeHeld[j][k] == 1){
-//                         sc.q1_courseList[j][k] = (class + i);
-//                         flag = 1;
-//                     }
-//                     if(class[i].q2_timeHeld[j][k] == 1){
-//                         sc.q2_courseList[j][k] = (class + i);
-//                         flag = 1;
-//                     }
-//                     if(flag == 1){
-//                         sc.totalCredits += (class+1)->credits;
-//                     }
-//                 }
-//             }
-//         }
-//     }
-// }
-
-//void requiredCreditGreedy(Schedule* schedule) {
-    // addRequired();
-    // then implement credit greedy on the rest
-    // return
-//}

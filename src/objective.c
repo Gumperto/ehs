@@ -14,6 +14,7 @@
 
 #define POINTLESS_PERIOD_COUNT 1
 #define BAD_PERIOD_COUNT 3
+#define EXPONENTIAL_BASE_BURNOUT 10
 
 double gapPenalty(Schedule* schedule) {
     double penalty = 0;
@@ -69,21 +70,21 @@ double commutePenalty(Schedule* schedule) {
     return penalty;
 }
 
-double creditDivergencePenalty(Schedule* schedule) {
+double creditDivergencePenalty(Schedule* schedule, MasterCheck* mastercheck) {
     double penalty = 0;
-    int distance = abs(schedule->totalCredits - schedule->targetCredits);
+    int distance = abs(schedule->totalCredits - mastercheck->targetCredits);
     penalty += distance * distance * BAD_PENALTY;
     printf("creditDivergencePenalty: %lf\n", penalty);
     return penalty;
 }
 
-double badSlotPenalty(Schedule* schedule) {
+double badSlotPenalty(Schedule* schedule, MasterCheck* mastercheck) {
     double penalty = 0;
     for (int q = QUARTER_ONE; q < SEMESTER_DURATION; q++) {
         int badSlotCount = 0;
         for (int p = PERIOD_1; p < NUM_PERIODS; p++) {
             for (int wd = MONDAY; wd < NUM_WEEKDAYS; wd++) {
-                if (schedule->periodCheck[p] == 1 && schedule->weekdayCheck[wd] == 1) continue;
+                if (mastercheck->periodCheck[p] == 1 && mastercheck->weekdayCheck[wd] == 1) continue;
                 if (schedule->schedule[q][p][wd] != NULL) badSlotCount++;
             }
         }
@@ -116,7 +117,7 @@ double courseCountPenalty(Schedule* schedule) {
                     periodCount++;
             }
                 if (periodCount == POINTLESS_PERIOD_COUNT) penalty += BAD_PENALTY;
-                else if (periodCount > BAD_PERIOD_COUNT) penalty += pow(10, periodCount - BAD_PERIOD_COUNT) * REALLY_BAD_PENALTY;
+                else if (periodCount > BAD_PERIOD_COUNT) penalty += pow(EXPONENTIAL_BASE_BURNOUT, periodCount - BAD_PERIOD_COUNT) * BAD_PENALTY;
         }
     }
     printf("courseCountPenalty: %lf\n", penalty);
@@ -136,15 +137,15 @@ double courseCountPenalty(Schedule* schedule) {
 *                                    required courses / 8. This difference is squared and then multiplied with BAD_PENALTY
 * - 1 slot taken in a day or >3 taken in a day: only 1 slot taken: BAD_PENALTY
 *                                               >3 slot taken: exponential penalty for each course over the 3rd, I *know* how terrible this is */
-double objective(Schedule* schedule, CourseList* courseList) {
+double objective(Schedule* schedule, CourseList* courseList, MasterCheck* mastercheck) {
     double score = 0;
     if (schedule->courseCountTaken == 0 || schedule->totalCredits == 0)
          score += ASTRONOMICAL_PENALTY;
 
     score += gapPenalty(schedule);
     score += commutePenalty(schedule);
-    score += creditDivergencePenalty(schedule);
-    score += badSlotPenalty(schedule);
+    score += creditDivergencePenalty(schedule, mastercheck);
+    score += badSlotPenalty(schedule, mastercheck);
     score += requirementPenalty(schedule, courseList);
     score += courseCountPenalty(schedule);
 

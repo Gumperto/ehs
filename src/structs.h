@@ -61,23 +61,27 @@ typedef struct {
 }CourseList;
 
 typedef struct {
-    // Separate schedules for q1 and q2 so no collisions
-    Course* schedule[SEMESTER_DURATION][NUM_PERIODS][NUM_WEEKDAYS];
-    size_t courseCountTaken;
-    size_t requiredCourseCount;
-
     // 1 on an index means allowed, 0 means not allowed (Monday = 0)
     int weekdayCheck[NUM_WEEKDAYS];
 
     // 1 on an index means allowed, 0 means not allowed (Period 1 = 0)
     int periodCheck[NUM_PERIODS];
 
+    // How many credits are specified by the user?
+    int targetCredits;    
+}MasterCheck;
+
+typedef struct {
+    // Separate schedules for q1 and q2 so no collisions
+    Course* schedule[SEMESTER_DURATION][NUM_PERIODS][NUM_WEEKDAYS];
+    size_t courseCountTaken;
+    size_t requiredCourseCount;
+
     // List of courses chosen for this schedule (not CourseList* because that owns the courses)
     Course* courseArray[MAX_COURSES];
 
     // How many credits have already been taken by this schedule arrangement?
     int totalCredits;
-    int targetCredits;
 }Schedule;
 
 #endif

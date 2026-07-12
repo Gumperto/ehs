@@ -15,12 +15,18 @@ void destroyCourse(Course* course);
 void initCourseList(CourseList* courseList);
 CourseList* createCourseList();
 bool pushCourseList(CourseList* courseList, Course* course);
-void clearCourseList(CourseList* courseList);
+bool clearCourseList(CourseList* courseList);
 void freeCourseList(CourseList* courseList);
 
 void initSchedule(Schedule* schedule);
-Schedule* createSchedule(int targetCredits, int* weekdayCheck, int* periodCheck);
-void clearSchedule(Schedule* schedule);
+Schedule* createSchedule();
+bool clearSchedule(Schedule* schedule);
 void freeSchedule(Schedule* schedule);
+
+void initMasterCheck(MasterCheck* mastercheck);
+MasterCheck* createMasterCheck();
+void fillMasterCheck(MasterCheck* mastercheck, int targetCredits, int* weekdayCheck, int* periodCheck);
+bool clearMasterCheck(MasterCheck* mastercheck);
+void freeMasterCheck(MasterCheck* mastercheck);
 
 #endif

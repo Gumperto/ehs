@@ -289,11 +289,16 @@ int starter(int argc, char** argv){
     resolveAvailabilityChecks(weekdayCheck, periodCheck);
     targetCredits = fetchTargetCredits(courseList);
 
-    Schedule* schedule = createSchedule(targetCredits, weekdayCheck, periodCheck);
+    Schedule* schedule = createSchedule();
     if (schedule == NULL) return 1;
 
-    maximizeCreditsDumb(schedule, courseList);
-    printf("Objective of schedule: %lf\n", objective(schedule, courseList));
+    MasterCheck* mastercheck = createMasterCheck();
+    fillMasterCheck(mastercheck, targetCredits, weekdayCheck, periodCheck);
+
+    printMasterChecks(mastercheck);
+
+    maximizeCreditsDumb(schedule, courseList, mastercheck);
+    printf("Objective of schedule: %lf\n", objective(schedule, courseList, mastercheck));
 
     printGeneralCourseListInfo(courseList);
 
