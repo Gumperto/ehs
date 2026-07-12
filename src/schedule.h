@@ -11,6 +11,7 @@ void destroyDuoList(DuoList* list);
 void initCourse(Course* course);
 Course* createCourse();
 void destroyCourse(Course* course);
+Course* setCourse(char* title, char* duration, char* meetings, int credit, int required, char* category);
 
 void initCourseList(CourseList* courseList);
 CourseList* createCourseList();

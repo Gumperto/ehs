@@ -1,12 +1,14 @@
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
+#include <stdio.h>
 #include "structs.h"
 #include "conversion.h"
+#include "stringOps.h"
 
 #define INITIAL_ALLOCATION_LIMIT 128
 
 // For DuoList
-
 void initDuoList(DuoList* list) {
     list->list = NULL;
     list->size = 0;
@@ -47,6 +49,7 @@ Course* createCourse() {
     return course;
 }
 
+
 bool destroyCourse(Course* course) {
     if (course == NULL) return false;
     if (course->meetings != NULL) destroyDuoList(course->meetings);
@@ -54,6 +57,61 @@ bool destroyCourse(Course* course) {
     free(course->category);
     free(course);
     return true;
+}
+
+Course* setCourse(char* title, char* duration, char* meetings, int credit, int required, char* category) {
+    Course* course = createCourse();
+    if (course == NULL || title == NULL || duration == NULL || meetings == NULL || category == NULL) {
+        destroyCourse(course);
+        return NULL;
+    }
+
+    // We need a copy here in case we pass the string argument directly into the function.
+    // That's going to cause the original char* meetings to be a read-only string literal,
+    // resulting in extremely infuriating segfault. Don't make the mistake I did.
+    // - Gump
+    char meetingsCopy[MAX_LENGTH];
+    strcpy(meetingsCopy, meetings);
+
+    Duo durationDuo;
+    DuoList* meetingsDuo = parseOccurrences(meetingsCopy);
+    if (meetingsDuo == NULL) {
+        fprintf(stderr, "Failed to parse meetings for course '%s'\n", course->title);
+        destroyCourse(course);
+        return NULL;
+    }
+
+    if (strcmp(duration, "Q1") == 0) {
+        durationDuo.tuple[QUARTER_ONE] = 1;
+        durationDuo.tuple[QUARTER_TWO] = 0;
+    }
+    else if (strcmp(duration, "Q2") == 0) {
+        durationDuo.tuple[QUARTER_ONE] = 0;
+        durationDuo.tuple[QUARTER_TWO] = 1;
+    }
+    else if (strcmp(duration, "Semester") == 0) {
+        durationDuo.tuple[QUARTER_ONE] = 1;
+        durationDuo.tuple[QUARTER_TWO] = 1;
+    }
+    else {
+        destroyCourse(course);
+        return NULL;
+    }
+
+    course->meetings = meetingsDuo;
+
+    course->title = strdup(title);
+    course->category = strdup(category);
+    if (course->title == NULL || course->category == NULL) {
+        destroyCourse(course);
+        return NULL;
+    }
+    course->durationDuo.tuple[QUARTER_ONE] = durationDuo.tuple[QUARTER_ONE];
+    course->durationDuo.tuple[QUARTER_TWO] = durationDuo.tuple[QUARTER_TWO];
+    course->credits = credit;
+    course->isRequired = required;
+    course->takenCredit = 0;
+    return course;
 }
 
 // For CourseList
