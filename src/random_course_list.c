@@ -15,9 +15,9 @@ int bernoulli(int denominator) {
 void random_course_list(char* random_file_name){
     FILE *fptr;
     srand(time(NULL));
-
-    char first_word[10][30] = {"Introduction to ","Analysis of ","Help me ","Eating ","Advanced ","Intermediate ","History of ","Fries with ","Basics of ","Critiques of "};
-    char second_word[10][30] = {"Touhou","Dolphin","えーりん","星街すいせい","Pickle","コダック","Perfect Math Class","Kuril Islands","Madoka","Van Lang"};
+    char first_word[10][30] = {"Introduction to ","Analysis of ","Help me ","Eating ","Advanced ","Intermediate ","History of ","Cirno's Perfect ","Basics of ","Critiques of "};
+    char second_word[10][30] = {"Touhou","Dolphin","Eirin","Suisei","Pickle","Psyduck","Perfect Math Class","Kuril Islands","Madoka","Van Lang"};
+    fptr = fopen("random_courses.txt","w");
 
     fptr = fopen(random_file_name,"w");
 
@@ -78,7 +78,7 @@ void random_course_list(char* random_file_name){
             }
             fprintf(fptr, "%d ", periods_considered[k]%6 + 1);
             if(k < (frequency-1)){
-                fprintf(fptr, ";");
+                fprintf(fptr, "; ");
             }
         }
         fprintf(fptr, "], ");
