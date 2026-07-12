@@ -5,8 +5,8 @@
 void random_course_list(){
     FILE *fptr;
     srand(time(NULL));
-    char first_word[10][30] = {"Introduction to ","Analysis of ","Help me ","Eating ","Advanced ","Intermediate ","History of ","Fries with ","Basics of ","Critiques of "};
-    char second_word[10][30] = {"Touhou","Dolphin","えーりん","星街すいせい","Pickle","コダック","Perfect Math Class","Kuril Islands","Madoka","Van Lang"};
+    char first_word[10][30] = {"Introduction to ","Analysis of ","Help me ","Eating ","Advanced ","Intermediate ","History of ","Cirno's Perfect ","Basics of ","Critiques of "};
+    char second_word[10][30] = {"Touhou","Dolphin","YagokoroEirin","Suisei","Pickle","Psyduck","Perfect Math Class","Kuril Islands","Madoka","Van Lang"};
     fptr = fopen("random_courses.txt","w");
     for(int i = 0; i < 100; i++){
         int first = rand()%10;
@@ -54,13 +54,20 @@ void random_course_list(){
             }
             fprintf(fptr, "%d ", periods_considered[k]%6 + 1);
             if(k < (frequency-1)){
-                fprintf(fptr, ";");
+                fprintf(fptr, "; ");
             }
         }
         fprintf(fptr, "], ");
 
         int credits = rand()%5 + 1;
-        fprintf(fptr, " %d, %d, ", credits, rand()%2);
+
+        int percentage_required  = rand()%10;
+
+        if(percentage_required == 0){
+            fprintf(fptr, " %d, %d, ", credits, 1);
+        }else{
+            fprintf(fptr, " %d, %d, ", credits, 0);
+        }
 
         int cat = rand()%8;
 
