@@ -1,0 +1,100 @@
+Basics of Pickle, Q1, [Thu: 4 ; Wed: 5 ; Tue: 6 ],  1, 0,  Japanese Language 
+Cirno's Perfect Madoka, Semester, [Mon: 4 ; Sat: 2 ],  3, 0,  VTubers 
+Advanced Pickle, Q2, [Mon: 2 ],  4, 1,  Clowning 
+Introduction to YagokoroEirin, Q1, [Thu: 3 ; Tue: 5 ],  1, 0,  Math 
+Eating Suisei, Q1, [Wed: 2 ; Tue: 4 ],  5, 0,  CSCE 
+Critiques of Kuril Islands, Semester, [Wed: 2 ],  2, 0,  Global 
+Eating Kuril Islands, Semester, [Tue: 3 ],  1, 0,  Global 
+Introduction to YagokoroEirin, Q2, [Mon: 6 ],  4, 1,  VTubers 
+Advanced Touhou, Q1, [Wed: 1 ],  3, 0,  Global 
+Advanced Perfect Math Class, Semester, [Mon: 3 ; Wed: 5 ],  1, 0,  Math 
+History of Kuril Islands, Q2, [Sat: 4 ; Thu: 5 ; Mon: 3 ],  5, 0,  Social Sciences 
+Intermediate Madoka, Semester, [Thu: 3 ],  4, 0,  VTubers 
+Intermediate Psyduck, Q2, [Sat: 3 ],  3, 0,  Clowning 
+Eating Pickle, Semester, [Mon: 5 ],  5, 0,  Humanities 
+Analysis of Van Lang, Q2, [Sat: 5 ],  4, 0,  CSCE 
+Eating Kuril Islands, Q2, [Sat: 1 ; Mon: 2 ; Thu: 3 ],  4, 0,  Japanese Language 
+Eating Touhou, Q2, [Tue: 5 ; Tue: 6 ],  2, 0,  Japanese Language 
+Analysis of Suisei, Q1, [Wed: 3 ; Mon: 3 ; Tue: 5 ],  3, 0,  Humanities 
+Help me Perfect Math Class, Q1, [Tue: 2 ; Tue: 3 ; Wed: 2 ],  4, 1,  Global 
+Help me Madoka, Q2, [Sat: 3 ; Tue: 1 ; Thu: 6 ],  2, 0,  Japanese Language 
+Basics of Psyduck, Q2, [Thu: 3 ; Tue: 1 ; Sat: 4 ],  5, 0,  Clowning 
+Critiques of Psyduck, Semester, [Tue: 2 ; Mon: 3 ; Sat: 3 ],  2, 0,  Japanese Language 
+Basics of Madoka, Q2, [Thu: 1 ; Wed: 4 ; Tue: 4 ],  4, 0,  Math 
+Eating Psyduck, Semester, [Mon: 2 ],  5, 0,  CSCE 
+Critiques of YagokoroEirin, Q2, [Thu: 3 ; Sat: 1 ; Sat: 6 ],  5, 0,  Math 
+Advanced Perfect Math Class, Q1, [Mon: 6 ; Thu: 6 ; Thu: 3 ],  4, 1,  Global 
+Help me Psyduck, Q1, [Wed: 6 ],  2, 0,  Japanese Language 
+Help me Van Lang, Semester, [Tue: 1 ; Thu: 1 ; Mon: 3 ],  2, 0,  Math 
+History of Madoka, Semester, [Tue: 4 ; Sat: 4 ; Mon: 4 ],  3, 0,  Japanese Language 
+Analysis of Psyduck, Semester, [Tue: 3 ; Sat: 1 ],  1, 0,  Social Sciences 
+Introduction to Perfect Math Class, Q1, [Wed: 6 ],  3, 1,  Math 
+Help me Dolphin, Semester, [Sat: 3 ; Wed: 1 ],  4, 0,  VTubers 
+Basics of Suisei, Semester, [Wed: 3 ; Thu: 3 ],  1, 0,  Global 
+Eating Madoka, Q2, [Mon: 5 ; Mon: 3 ; Tue: 2 ],  3, 0,  Social Sciences 
+Critiques of Madoka, Semester, [Tue: 5 ; Sat: 2 ],  3, 1,  Clowning 
+Introduction to Madoka, Q1, [Sat: 2 ; Wed: 3 ],  2, 0,  CSCE 
+Basics of Madoka, Q1, [Tue: 3 ; Tue: 5 ; Wed: 1 ],  2, 0,  Clowning 
+Advanced Dolphin, Semester, [Sat: 2 ],  2, 0,  VTubers 
+Eating YagokoroEirin, Q1, [Wed: 5 ; Mon: 2 ],  1, 0,  VTubers 
+Advanced Dolphin, Q1, [Mon: 4 ],  5, 1,  Humanities 
+Cirno's Perfect Dolphin, Semester, [Wed: 1 ],  5, 0,  Math 
+Eating Pickle, Q1, [Mon: 6 ],  2, 0,  Humanities 
+Advanced YagokoroEirin, Q1, [Tue: 4 ; Wed: 1 ],  1, 0,  Math 
+Eating Dolphin, Semester, [Sat: 2 ; Thu: 5 ; Sat: 4 ],  5, 0,  Japanese Language 
+Analysis of YagokoroEirin, Semester, [Mon: 4 ; Wed: 1 ],  3, 0,  Global 
+History of Pickle, Q2, [Tue: 1 ],  4, 1,  Math 
+Advanced Van Lang, Semester, [Thu: 6 ; Wed: 1 ; Tue: 4 ],  5, 0,  Humanities 
+Basics of Psyduck, Q1, [Sat: 4 ],  2, 0,  VTubers 
+Advanced Touhou, Q1, [Wed: 1 ],  4, 0,  Social Sciences 
+Cirno's Perfect Perfect Math Class, Q2, [Sat: 2 ; Tue: 6 ],  1, 0,  Global 
+Analysis of Pickle, Q2, [Tue: 1 ],  1, 0,  Humanities 
+Help me Madoka, Q1, [Tue: 6 ],  1, 0,  Math 
+Eating Touhou, Q1, [Wed: 6 ],  5, 0,  Japanese Language 
+Basics of Madoka, Q1, [Tue: 1 ; Mon: 5 ],  5, 0,  Japanese Language 
+Cirno's Perfect Madoka, Q2, [Mon: 2 ; Wed: 2 ; Sat: 4 ],  3, 1,  Clowning 
+Eating Madoka, Semester, [Wed: 4 ; Wed: 1 ],  1, 0,  Social Sciences 
+Basics of Dolphin, Q2, [Mon: 3 ; Mon: 5 ; Wed: 1 ],  5, 0,  Japanese Language 
+Help me Kuril Islands, Q1, [Tue: 1 ; Wed: 3 ],  1, 0,  Global 
+Basics of Van Lang, Semester, [Tue: 3 ; Mon: 1 ; Tue: 1 ],  2, 0,  Global 
+Introduction to YagokoroEirin, Semester, [Sat: 6 ; Thu: 4 ],  1, 0,  Math 
+Basics of Kuril Islands, Q2, [Sat: 2 ],  3, 0,  Humanities 
+Critiques of YagokoroEirin, Q1, [Mon: 3 ; Mon: 5 ; Mon: 2 ],  4, 0,  Humanities 
+Introduction to YagokoroEirin, Semester, [Wed: 6 ; Thu: 1 ],  1, 0,  VTubers 
+Advanced Pickle, Q1, [Thu: 4 ; Sat: 5 ],  2, 0,  Math 
+Intermediate Suisei, Q1, [Thu: 1 ; Mon: 6 ; Mon: 3 ],  2, 0,  Social Sciences 
+Eating Dolphin, Q2, [Thu: 1 ; Sat: 1 ; Wed: 1 ],  2, 0,  Clowning 
+Eating Madoka, Q1, [Wed: 6 ; Tue: 6 ; Thu: 6 ],  5, 0,  Japanese Language 
+Help me Dolphin, Q2, [Thu: 4 ; Sat: 3 ],  5, 1,  Japanese Language 
+Eating Kuril Islands, Semester, [Sat: 6 ; Sat: 2 ],  1, 0,  Clowning 
+Help me Dolphin, Q1, [Thu: 4 ; Tue: 5 ],  4, 0,  Clowning 
+Intermediate Pickle, Q2, [Sat: 2 ; Thu: 2 ; Tue: 5 ],  3, 0,  VTubers 
+Intermediate Kuril Islands, Q1, [Tue: 3 ; Tue: 2 ],  3, 0,  Math 
+Analysis of Van Lang, Semester, [Mon: 2 ; Wed: 6 ],  3, 0,  Social Sciences 
+Basics of Van Lang, Semester, [Wed: 3 ; Wed: 1 ; Sat: 3 ],  3, 0,  VTubers 
+Introduction to Suisei, Semester, [Sat: 6 ; Wed: 4 ; Sat: 4 ],  5, 0,  CSCE 
+Introduction to Psyduck, Q1, [Tue: 5 ; Tue: 6 ; Wed: 1 ],  1, 0,  Japanese Language 
+Critiques of Van Lang, Q2, [Wed: 6 ],  5, 1,  Social Sciences 
+Intermediate Suisei, Q2, [Thu: 4 ; Thu: 6 ],  2, 0,  Japanese Language 
+Cirno's Perfect Dolphin, Q1, [Thu: 1 ],  3, 0,  Social Sciences 
+Introduction to Suisei, Q1, [Sat: 3 ; Mon: 5 ; Thu: 4 ],  5, 0,  Math 
+Intermediate Van Lang, Q1, [Sat: 1 ; Mon: 3 ; Tue: 3 ],  3, 0,  Global 
+Cirno's Perfect Perfect Math Class, Q2, [Thu: 3 ],  3, 0,  CSCE 
+History of Pickle, Q2, [Tue: 1 ; Wed: 2 ],  3, 0,  Clowning 
+Intermediate Kuril Islands, Q1, [Sat: 2 ; Tue: 5 ],  1, 0,  Social Sciences 
+Basics of Psyduck, Q2, [Wed: 4 ; Tue: 6 ],  4, 0,  Humanities 
+Basics of Psyduck, Q1, [Tue: 2 ; Sat: 2 ],  4, 0,  Social Sciences 
+Basics of Perfect Math Class, Q2, [Sat: 2 ; Mon: 1 ; Thu: 5 ],  4, 0,  Clowning 
+Introduction to Dolphin, Q2, [Wed: 4 ; Sat: 2 ; Sat: 3 ],  5, 0,  Humanities 
+Basics of Dolphin, Q2, [Thu: 1 ; Mon: 6 ],  2, 0,  Global 
+History of Psyduck, Q2, [Thu: 3 ; Mon: 2 ],  2, 0,  Humanities 
+Analysis of Madoka, Q1, [Thu: 6 ; Wed: 5 ],  3, 0,  Clowning 
+Basics of Psyduck, Semester, [Mon: 1 ],  3, 0,  Social Sciences 
+Basics of Madoka, Q2, [Thu: 6 ; Wed: 2 ],  2, 0,  Global 
+Advanced Touhou, Semester, [Wed: 1 ],  1, 0,  VTubers 
+Help me Perfect Math Class, Q2, [Tue: 4 ; Thu: 2 ; Thu: 5 ],  1, 1,  Humanities 
+Advanced Pickle, Semester, [Tue: 6 ],  1, 0,  Clowning 
+Critiques of YagokoroEirin, Q1, [Sat: 4 ],  1, 0,  Clowning 
+Critiques of Psyduck, Q2, [Wed: 6 ; Wed: 1 ; Tue: 4 ],  2, 0,  Math 
+Advanced Perfect Math Class, Q1, [Wed: 5 ; Thu: 2 ],  4, 1,  Math 
+Basics of Dolphin, Semester, [Thu: 5 ; Mon: 4 ; Sat: 1 ],  5, 0,  Social Sciences 

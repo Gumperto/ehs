@@ -27,10 +27,13 @@ int main() {
     
     readfile(schedule, filename);
 
-    printGeneralScheduleInformation(schedule);
+    /*printGeneralScheduleInformation(schedule);
     printFullCourseList(schedule);
     printf("Course count is %d\n", schedule->courseCountTotal);
     qsort(schedule -> courseList, schedule->courseCountTotal, sizeof(Course*), comp_credits);
-    printFullCourseList(schedule);
+    printFullCourseList(schedule);*/
+    maximizeCredits(*schedule);
+    printCourseSlotsMatrix(schedule);
+
     return 0;
 }
