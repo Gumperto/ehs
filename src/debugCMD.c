@@ -32,14 +32,14 @@ void printFullCourseList(CourseList* courseList) {
         printCourseInformation(course);
         printf("\n");
     }
-    printf("\n====================\n");
+    printf("\n====================\n\n");
 }
 
 void printGeneralCourseListInfo(CourseList* courseList) {
     printf("== General CourseList info ==\n");
     printf("Total courses in courseList: %zu\n", courseList->courseCountTotal);
     printf("Total required courses in courseList: %zu\n", courseList->requiredCourseTotal);
-    printf("\n=============================\n");
+    printf("\n=============================\n\n");
 }
 
 // ==============
@@ -51,7 +51,7 @@ void printGeneralScheduleInformation(Schedule* schedule) {
     printf("Total courses taken: %zu\n", schedule->courseCountTaken);
     printf("Total credits of taken courses: %d\n", schedule->totalCredits);
     printf("Total required courses taken: %zu\n", schedule->requiredCourseCount);
-    printf("\n==================================\n");
+    printf("\n==================================\n\n");
 }
 
 void printQuarterTable(Schedule *schedule, int quarter, const char *label) {
@@ -79,7 +79,7 @@ void printCourseSlotsMatrix(Schedule *schedule) {
     printf("== Course slots matrix ==\n");
     printQuarterTable(schedule, QUARTER_ONE, "Quarter 1");
     printQuarterTable(schedule, QUARTER_TWO, "Quarter 2");
-    printf("\n=========================\n");
+    printf("=========================\n\n");
 }
 
 void printCourseListInSchedule(Schedule* schedule) {
@@ -87,7 +87,7 @@ void printCourseListInSchedule(Schedule* schedule) {
     for (size_t course = 0; course < schedule->courseCountTaken; course++) {
         printf("Course %zu: '%s'\n", course, schedule->courseArray[course]->title);
     }
-    printf("\n=============================\n");
+    printf("=============================\n\n");
 }
 
 // ============
@@ -108,5 +108,5 @@ void printMasterChecks(MasterCheck* mastercheck) {
     for (int period = PERIOD_1; period < NUM_PERIODS; period++)
         if (mastercheck->periodCheck[period] == 1) printf("%d ", period + 1);
 
-    printf("\n========================\n");
+    printf("\n========================\n\n");
 }
