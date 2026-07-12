@@ -5,11 +5,15 @@
 // Adding courses
 // ==============
 
+bool isScheduleFull(Schedule* schedule) {
+    if (schedule->courseArray[MAX_COURSES - 1] == NULL) return false;
+    return true;
+}
+
 bool checkCourseEligibility(Schedule* schedule, Course* course) {
     if (schedule == NULL || course == NULL) return false;
 
-    // not added
-    // if (schedule->isFull == 1) return false;
+    if (isScheduleFull(schedule) == true) return false;
 
     // initial filtering
     int takenCredit = course->takenCredit;

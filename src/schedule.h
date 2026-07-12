@@ -20,6 +20,8 @@ void freeCourseList(CourseList* courseList);
 
 void initSchedule(Schedule* schedule);
 Schedule* createSchedule();
+Schedule* deepCloneSchedule(Schedule* schedule);
+bool scheduleRemoveCourseAt(Schedule* schedule, int index);
 bool clearSchedule(Schedule* schedule);
 void freeSchedule(Schedule* schedule);
 

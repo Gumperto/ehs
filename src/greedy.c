@@ -3,6 +3,7 @@
 #include "structs.h"
 #include "sortCoursesByCriteria.h"
 
+// O(nlogn)
 void maximizeCreditsDumb(Schedule* schedule, CourseList* courseList, MasterCheck* mastercheck) {
     // sort course list by credits highest -> lowest
     sortCourseList(courseList, "credits");

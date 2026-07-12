@@ -4,6 +4,8 @@
 #include <stddef.h>
 
 #define RANDOM_COURSE_NUMBER 128
+#define MAX_LENGTH 256
+#define MAX_TRIALS_RANDOM 1000
 
 typedef enum {
     TWO = 2
@@ -83,5 +85,15 @@ typedef struct {
     // How many credits have already been taken by this schedule arrangement?
     int totalCredits;
 }Schedule;
+
+typedef struct {
+    char fileName[MAX_LENGTH];
+    int randomFlag;
+    int nameFlag;
+    int randomSeed;
+    int helpFlag;
+    int errFlag;
+    int verbose;
+}CMDArgs;
 
 #endif

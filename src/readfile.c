@@ -6,7 +6,7 @@
 #include "structs.h"
 #include "conversion.h"
 
-#define MAX_LENGTH 512
+#define MAX_LINE_LENGTH 512
 #define MAX_SIZE 16
 
 void replaceAllOccurrencesOfChars(char* string, char* characterSet, char replacementChar) {
@@ -144,17 +144,17 @@ void readfile(CourseList* courseList, char* coursesTXT){
     }
 
     int increment = 0;
-    char line[MAX_LENGTH];
+    char line[MAX_LINE_LENGTH];
 
     // Read the header row
-    if (fgets(line, MAX_LENGTH, fptr) == NULL) {
+    if (fgets(line, MAX_LINE_LENGTH, fptr) == NULL) {
         printf("Error: File is empty.\n");
         fclose(fptr);
         exit(1);
     }
 
     // Read data from data file
-    while (fgets(line, MAX_LENGTH, fptr)) {
+    while (fgets(line, MAX_LINE_LENGTH, fptr)) {
         // Read and discard the ID column (if exists)
         // char *token = strtok(line, ",");
         // if (!token) continue;

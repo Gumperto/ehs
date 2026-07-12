@@ -102,7 +102,9 @@ void freeCourseList(CourseList* courseList) {
     free(courseList);
 }
 
+// ============
 // For schedule
+// ============
 void initSchedule(Schedule* schedule) {
     // Initialize all slots to NULL
     for (int quarter = QUARTER_ONE; quarter < SEMESTER_DURATION; quarter++) {
@@ -134,6 +136,7 @@ Schedule* createSchedule() {
 
 Schedule* deepCloneSchedule(Schedule* schedule) {
     Schedule* scheduleNew = createSchedule();
+    if (scheduleNew == NULL) return NULL;
 
     scheduleNew->courseCountTaken = schedule->courseCountTaken;
     scheduleNew->requiredCourseCount = schedule->requiredCourseCount;
@@ -153,6 +156,30 @@ Schedule* deepCloneSchedule(Schedule* schedule) {
         scheduleNew->courseArray[course] = schedule->courseArray[course];
 
     return scheduleNew;
+}
+
+bool scheduleRemoveCourseAt(Schedule* schedule, int index) {
+    if (schedule == NULL || index < 0 || index >= (int)schedule->courseCountTaken) return false;
+
+    // Clear out meetings the course would have
+    Course* course = schedule->courseArray[index];
+    for (int i = 0; i < course->meetings->size; i++) {
+        int period = course->meetings->list[i].tuple[PERIOD];
+        int weekday = course->meetings->list[i].tuple[WEEKDAY];
+        for (int quarter = QUARTER_ONE; quarter < SEMESTER_DURATION; quarter++) {
+            if (course->durationDuo.tuple[quarter] == 0) continue;
+            schedule->schedule[quarter][period][weekday] = NULL;
+        }
+    }
+
+    schedule->totalCredits -= course->credits;
+    schedule->courseCountTaken--;
+
+    // Move last index to empty index to preserve printing structure
+    // No need to correct courseCountTaken index since that was already subtracted before
+    schedule->courseArray[index] = schedule->courseArray[schedule->courseCountTaken];
+
+    return true;
 }
 
 bool clearSchedule(Schedule* schedule) {

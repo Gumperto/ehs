@@ -1,26 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 #include "structs.h"
-
-#define MAX_LENGTH 32
-
-int min(int a, int b) {
-    if (a > b) return b;
-    else return a;
-}
-
-// produces p = 1/denominator bernoulli dist
-int bernoulli(int denominator) {
-    if (rand() % denominator == 0) {   // 1 - 1/denominator -> false, 1/denominator -> true
-        return 1;
-    }
-    else return 0;
-}
+#include "randomness.h"
 
 void random_course_list(int samples, char* random_file_name){
     FILE *fptr;
-    srand(time(NULL));
     char first_word[][MAX_LENGTH] = {
         "Introduction to ",
         "Analysis of ",
@@ -120,8 +104,10 @@ void random_course_list(int samples, char* random_file_name){
         int credits = rand()%4 + 1;
         // Required at a 1/5 probability
         int required = 0;
-        if (requiredCap > requiredSoFar)
+        if (requiredCap > requiredSoFar) {
+            requiredSoFar++;
             required = bernoulli(5);
+        }
         fprintf(fptr, " %d, %d, ", credits, required);
 
         // Category
