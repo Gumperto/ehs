@@ -2,19 +2,37 @@
 #include <stdlib.h>
 #include <time.h>
 
-void random_course_list(){
+#define RANDOM_COURSE_NUMBER 128
+
+// produces p = 1/denominator bernoulli dist
+int bernoulli(int denominator) {
+    if (rand() % denominator == 0) {   // 9/10 → true, 1/10 → false (rand()%10 == 0)
+        return 1;
+    }
+    else return 0;
+}
+
+void random_course_list(char* random_file_name){
     FILE *fptr;
     srand(time(NULL));
     char first_word[10][30] = {"Introduction to ","Analysis of ","Help me ","Eating ","Advanced ","Intermediate ","History of ","Cirno's Perfect ","Basics of ","Critiques of "};
-    char second_word[10][30] = {"Touhou","Dolphin","YagokoroEirin","Suisei","Pickle","Psyduck","Perfect Math Class","Kuril Islands","Madoka","Van Lang"};
+    char second_word[10][30] = {"Touhou","Dolphin","Eirin","Suisei","Pickle","Psyduck","Perfect Math Class","Kuril Islands","Madoka","Van Lang"};
     fptr = fopen("random_courses.txt","w");
-    for(int i = 0; i < 100; i++){
+
+    fptr = fopen(random_file_name,"w");
+
+    for(int i = 0; i < RANDOM_COURSE_NUMBER; i++){
+        // Title
         int first = rand()%10;
         int second = rand()%10;
+
         fprintf(fptr, "%s",first_word[first]);
         fprintf(fptr, "%s",second_word[second]);
         fprintf(fptr, ", ");
+
+        // Duration
         int duration = rand()%3;
+
         if(duration == 0){
             fprintf(fptr, "Semester, ");
         }else if (duration == 1){
@@ -22,8 +40,13 @@ void random_course_list(){
         }else{
             fprintf(fptr, "Q2, ");
         }
+
+        // Frequency
         int frequency = rand()%3 + 1;
-        int periods_considered [frequency];
+        fprintf(fptr, "%d, ", frequency);
+
+        int periods_considered[frequency];
+
         for(int j = 0; j < frequency; j++){
             int is_same = 0;
             while(is_same == 0){
@@ -36,6 +59,7 @@ void random_course_list(){
                 }
             }
         }
+
         fprintf(fptr, "[");
         for(int k = 0; k < frequency; k++){
             int day = periods_considered[k]/6;
@@ -59,16 +83,12 @@ void random_course_list(){
         }
         fprintf(fptr, "], ");
 
+        // Credits & Required
         int credits = rand()%5 + 1;
+        int required = bernoulli(5);
+        fprintf(fptr, " %d, %d, ", credits, required);
 
-        int percentage_required  = rand()%10;
-
-        if(percentage_required == 0){
-            fprintf(fptr, " %d, %d, ", credits, 1);
-        }else{
-            fprintf(fptr, " %d, %d, ", credits, 0);
-        }
-
+        // Category
         int cat = rand()%8;
 
         if(cat == 0){
@@ -89,12 +109,7 @@ void random_course_list(){
             fprintf(fptr, " %s ","Japanese Language");
         }
 
-
         fprintf(fptr, "\n");
     }
     fclose(fptr);
-}
-
-int main(void){
-    random_course_list();
 }

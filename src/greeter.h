@@ -1,7 +1,6 @@
 #ifndef GREETER
 #define GREETER
 
-#include "structs.h"
-void starter(Schedule sc);
+int starter(int argc, char** argv);
 
 #endif

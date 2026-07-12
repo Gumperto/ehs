@@ -2,7 +2,6 @@
 #define READFILE
 
 #include "structs.h"
-void readfile(Schedule* schedule, char* coursesTXT);
-Course* createCourse(char* title, char* duration, char* meetings, int credit, int required, char* category);
+void readfile(CourseList* courseList, char* coursesTXT);
 
 #endif

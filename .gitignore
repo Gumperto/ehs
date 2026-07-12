@@ -3,3 +3,5 @@ slides/presentation.pdf
 /build
 /.cache
 .DS_Store
+.a.out
+random_courses.txt

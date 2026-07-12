@@ -1,13 +1,64 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include <stdbool.h>
 #include "structs.h"
 
-int comp_credits(const void * a, const void * b){
-    /*printf("a is: %s \n",((Course *)a)->title);
-    printf("b is: %s \n",((Course *)b)->title);
-    printf("Address of a is: %p \n",a);
-    printf("Address of b is: %p \n",b);*/
-    return(((*(Course **)b)->credits)-((*(Course **)a)->credits));
+// ==============
+// Adding courses
+// ==============
+
+bool checkCourseEligibility(Schedule* schedule, Course* course) {
+    if (schedule == NULL || course == NULL) return false;
+
+    // initial filtering
+    int takenCredit = course->takenCredit;
+    if (takenCredit == 1) return false;
+
+    for (int occurrenceIncrement = 0; occurrenceIncrement < course->meetings->size; occurrenceIncrement++) {
+        // Initialize some check variables
+        int checkPeriod = course->meetings->list[occurrenceIncrement].tuple[PERIOD];
+        int checkWeekday = course->meetings->list[occurrenceIncrement].tuple[WEEKDAY];
+
+        // Maybe don't outright ban but punish heavily
+        // if ((schedule->periodCheck[checkPeriod] == 0 && course->isRequired == 0) ||
+        //     (schedule->weekdayCheck[checkWeekday] == 0 && course->isRequired == 0))
+        //     return false;
+
+        // Do not add the course if it overlaps with a course 
+        // that already occupied at least one of its meetings.
+        // (We assume the course added before is strictly better)
+        for (int quarter = QUARTER_ONE; quarter < SEMESTER_DURATION; quarter++) {
+            if (course->durationDuo.tuple[quarter] == 0) continue; // if course not held in some quarter, skip
+            else {
+                if (schedule->schedule[quarter][checkPeriod][checkWeekday] != NULL) 
+                    return false;
+            }
+        }
+
+        // not added
+        // if (schedule->isFull == 1) return false;
+    }
+
+    return true;
+}
+
+bool addCourseToSchedule(Schedule* schedule, Course* course) {
+    if (schedule == NULL || course == NULL) return false;
+    if (checkCourseEligibility(schedule, course) == false) return false;
+
+    for (int occurrenceIncrement = 0; occurrenceIncrement < course->meetings->size; occurrenceIncrement++) {
+        for (int quarter = QUARTER_ONE; quarter < SEMESTER_DURATION; quarter++) {
+            if (course->durationDuo.tuple[quarter] == 0) continue;
+
+            int period = course->meetings->list[occurrenceIncrement].tuple[PERIOD];
+            int weekday = course->meetings->list[occurrenceIncrement].tuple[WEEKDAY];
+            schedule->schedule[quarter][period][weekday] = course;
+        }
+    }
+    
+    schedule->courseArray[schedule->courseCountTaken] = course;
+    schedule->courseCountTaken++;
+    if (course->isRequired == 1) schedule->requiredCourseCount++;
+    schedule->totalCredits += course->credits;
+    return true;
 }
 
 // void addRequired(Schedule sc, Course * class, int numCourses){
@@ -35,46 +86,8 @@ int comp_credits(const void * a, const void * b){
 //     }
 // }
 
-
-
-
-
 //void requiredCreditGreedy(Schedule* schedule) {
     // addRequired();
     // then implement credit greedy on the rest
     // return
 //}
-
-void maximizeCredits(Schedule sc){
-    qsort(sc.courseList, sc.courseCountTotal, sizeof(Course*), comp_credits);
-    while((sc.totalCredits) < (sc.targetCredits)){
-        for(int i = 0; i < sc.courseCountTotal; i++){
-            Course * tentative_course = sc.courseList[i];
-            int course_available = 1;
-            for(int j = 0; j < (tentative_course -> meetings.size); j++){
-                int period_held = ((tentative_course -> meetings.list+j) -> tuple)[0];
-                int weekday_held = ((tentative_course -> meetings.list+j) -> tuple)[1];
-
-                    if((sc.schedule[0][period_held][weekday_held] != NULL) && (tentative_course -> durationsDuo.tuple[0] == 1)){
-                        course_available = 0;
-                    } 
-                    if((sc.schedule[1][period_held][weekday_held] != NULL) && (tentative_course -> durationsDuo.tuple[1] == 1)){
-                        course_available = 0;
-                    } 
-            }
-            if(course_available == 1){
-                for(int k = 0; k < (tentative_course -> meetings.size); k++){
-                int period_held = ((tentative_course -> meetings.list+k) -> tuple)[0];
-                int weekday_held = ((tentative_course -> meetings.list+k) -> tuple)[1];
-                    if(tentative_course -> durationsDuo.tuple[0] == 1){
-                        sc.schedule[0][period_held][weekday_held] = tentative_course;
-                    } 
-                    if(tentative_course -> durationsDuo.tuple[1] == 1){
-                        sc.schedule[1][period_held][weekday_held] = tentative_course;
-                    } 
-                }
-            }
-        }
-    }
-}
-

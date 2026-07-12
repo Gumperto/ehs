@@ -1,9 +1,10 @@
-#ifndef SCHEDULE
-#define SCHEDULE
+#ifndef CHOOSECOURSE
+#define CHOOSECOURSE
 
 #include "structs.h"
-void requiredCreditGreedy(Schedule* schedule);
+#include <stdbool.h>
 
-int comp_credits(const void * a, const void * b);
-void maximizeCredits(Schedule sc);
+bool checkCourseEligibility(Schedule* schedule, Course* course);
+bool addCourseToSchedule(Schedule* schedule, Course* course);
+
 #endif

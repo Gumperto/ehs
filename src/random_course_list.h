@@ -1,7 +1,6 @@
 #ifndef RANDOMCOURSELIST
 #define RANDOMCOURSELIST
 
-#include "structs.h"
-void random_course_list();
+void random_course_list(char* random_file_name);
 
 #endif

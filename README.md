@@ -28,9 +28,11 @@ cd ehs
 3. Build the program using the following commands:
 ```
 make
-# If you are thinking of contributing and use the clangd LSP, run 
-# bear -- make 
-# instead
+```
+
+If you are thinking of contributing and use the `clangd` LSP, instead run:
+```
+bear -- make 
 ```
 
 4. Run the program and do stuff 

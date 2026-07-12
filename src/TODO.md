@@ -1,6 +1,6 @@
 # 1st priority:
-- [ ] Discuss:
-    - [ ] Do we wanna do things per semester
+- [x] Discuss:
+    - [x] Do we wanna do things per semester
     - [ ] Per year?
     - [ ] The whole thing for 4 years?
 

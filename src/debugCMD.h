@@ -1,14 +1,11 @@
 #ifndef DEBUGCMD
 #define DEBUGCMD
 
-typedef enum {
-    PERIOD = 0,
-    WEEKDAY
-}OccurrenceIndex;
-
 #include "structs.h"
+void printFullCourseList(CourseList* courseList);
+void printGeneralCourseListInfo(CourseList* courseList);
 void printGeneralScheduleInformation(Schedule* schedule);
-void printFullCourseList(Schedule* schedule);
 void printCourseSlotsMatrix(Schedule* schedule);
+void printCourseListInSchedule(Schedule* schedule);
 
 #endif
