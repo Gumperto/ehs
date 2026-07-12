@@ -2,6 +2,7 @@
 #define GREEDY
 
 #include "structs.h"
-void maximizeCreditsDumb(Schedule* schedule, CourseList* courseList, MasterCheck* mastercheck);
+Schedule* maximizeCreditsDumb(CourseList* courseList, MasterCheck* mastercheck, int verbose);
+void maximizeCreditsDumb__wrapper(CourseList* courseList, MasterCheck* mastercheck, int verbose);
 
 #endif

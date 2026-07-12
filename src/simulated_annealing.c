@@ -9,8 +9,10 @@
 #include "objective.h"
 #include "structs.h"
 #include "schedule.h"
+#include "debugCMD.h"
 
 #define MAX_ITERATIONS 10000
+#define TEMP_THRESHOLD 0.001
 
 typedef enum {
     REMOVE = 0,
@@ -100,9 +102,28 @@ Schedule* simulatedAnnealing(CourseList* courseList, MasterCheck* mastercheck,
 
         // cool down
         temperature *= COOLDOWN;
+        
+        // This is so it doesn't cool down immediately
+        if (temperature < TEMP_THRESHOLD) temperature = TEMP_THRESHOLD;
+        
         if (verbose) printf("\nCurrent cost is: %lf\n", new_cost);
+
+        if (i % 100 == 0) {
+            printf("Iteration: %d\n", i);
+            printf("Temperature: %lf\n", temperature);
+            printf("Cooldown: %lf\n", COOLDOWN);
+        }
+
     }
     
-    printf("SA schedule arrived at schedule with cost: %lf\n", current_cost);
+    printf("SA algorithm arrived at schedule with cost: %lf\n", current_cost);
     return current;
+}
+
+void simulatedAnnealing__wrapper(CourseList* courseList, MasterCheck* mastercheck, 
+                                 double INIT_TEMP, double COOLDOWN, int verbose) {
+    Schedule* schedule = simulatedAnnealing(courseList, mastercheck, INIT_TEMP, 
+                                            COOLDOWN, verbose);
+    printCourseSlotsMatrix(schedule);
+    free(schedule);
 }

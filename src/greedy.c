@@ -1,10 +1,17 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include "chooseCourse.h"
+#include "schedule.h"
 #include "structs.h"
+#include "objective.h"
 #include "sortCoursesByCriteria.h"
+#include "debugCMD.h"
 
-// O(nlogn)
-void maximizeCreditsDumb(Schedule* schedule, CourseList* courseList, MasterCheck* mastercheck) {
+// O(nlogn) where n is number of courses
+Schedule* maximizeCreditsDumb(CourseList* courseList, MasterCheck* mastercheck, int verbose) {
+    Schedule* schedule = createSchedule();
+    if (schedule == NULL) return NULL;
+
     // sort course list by credits highest -> lowest
     sortCourseList(courseList, "credits");
 
@@ -16,4 +23,13 @@ void maximizeCreditsDumb(Schedule* schedule, CourseList* courseList, MasterCheck
             continue;
         }
     }
+    double cost = objective(schedule, courseList, mastercheck, verbose);
+    printf("Greedy (credits) algorithm arrived at schedule with cost: %lf\n", cost);
+    return schedule;
+}
+
+void maximizeCreditsDumb__wrapper(CourseList* courseList, MasterCheck* mastercheck, int verbose) {
+    Schedule* schedule = maximizeCreditsDumb(courseList, mastercheck, verbose);
+    printCourseSlotsMatrix(schedule);
+    freeSchedule(schedule);
 }
