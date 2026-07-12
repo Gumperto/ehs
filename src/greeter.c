@@ -6,16 +6,17 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
 #include "structs.h"
 #include "schedule.h"
 #include "readfile.h"
 #include "debugCMD.h"
 #include "conversion.h"
 #include "greedy.h"
+#include "randomness.h"
 #include "random_course_list.h"
 #include "objective.h"
-
-#define MAX_LENGTH 256
+#include "simulated_annealing.h"
 
 int fetchFilename(char** argv, char* filename) {
     int check;
@@ -134,16 +135,18 @@ int fetchTargetCredits(CourseList* courseList) {
     return targetCredits;
 }
 
-bool cmdlineGet(int argc, char** argv, char* filename) {
-    char random_file_name[] = "random_courses.txt";
-    int inputCheck = 1;
+CMDArgs cmdlineGet(int argc, char** argv) {
+    CMDArgs args;
+    args.randomFlag = 0;
+    args.nameFlag = 0;
+    args.helpFlag = 0;
+    args.errFlag = 0;
+    args.verbose = 0;
+    args.randomSeed = 42;
+
 
     #ifdef __unix__
-        int randomFlag = 0;
-        int nameFlag = 0;
-        int randomSeed = 1;
-        int helpFlag = 0;
-        int errFlag = 0;
+        
 
         while (1) {
             int option_index = 0;
@@ -152,10 +155,11 @@ bool cmdlineGet(int argc, char** argv, char* filename) {
                 {"random-gen",     optional_argument, NULL,  'r'},
                 {"data",           required_argument, NULL,  'd'},
                 {"help",           no_argument,       NULL,  'h'},
+                {"verbose",        no_argument,       NULL,  'v'},
                 {NULL,             0,                 NULL,    0}
             };
 
-            int c = getopt_long(argc, argv, "-:r::d:h", long_options, &option_index);
+            int c = getopt_long(argc, argv, "-:r::d:hv", long_options, &option_index);
             if (c == -1)
               break;
 
@@ -170,11 +174,11 @@ bool cmdlineGet(int argc, char** argv, char* filename) {
                 // regular argument
                 case 1:
                     if (optarg == NULL) {
-                        errFlag = 1;
+                        args.errFlag = 1;
                         break;
                     }
-                    strcpy(filename, optarg);
-                    nameFlag = 1;
+                    strcpy(args.fileName, optarg);
+                    args.nameFlag = 1;
                     break;
 
                 case 'h':
@@ -183,22 +187,27 @@ bool cmdlineGet(int argc, char** argv, char* filename) {
                             argv[0]);
                     printf("GUIDE: ");
                     printf("\t%-28s: %-28s\n", "--help OR --h", "print this menu");
-                    printf("\t%-28s: %-28s\n", "--data OR --d [path]", "required; tells ehs what file to read");
-                    printf("\t%-28s: %-28s\n", "--random-gen OR --r [seed]", "optional; randomly generates a file and reads it");
-                    helpFlag = 1;
+                    printf("\t%-28s: %-28s\n", "--verbose OR --v", "print detailed execution results");
+                    printf("\t%-28s: %-28s\n", "--data OR --d [path]", "arg required; tells ehs what file to read");
+                    printf("\t%-28s: %-28s\n", "--random-gen OR --r [seed]", "arg optional; randomly generates a file and reads it");
+                    args.helpFlag = 1;
                     break;
                 
                 case 'r':
-                    randomFlag = 1;
+                    args.randomFlag = 1;
                     break;
 
                 case 'd':
                     if (optarg == NULL) {
-                        errFlag = 1;
+                        args.errFlag = 1;
                         break;
                     }
-                    strcpy(filename, optarg);
-                    nameFlag = 1;
+                    strcpy(args.fileName, optarg);
+                    args.nameFlag = 1;
+                    break;
+
+                case 'v':
+                    args.verbose = 1;
                     break;
 
                 case '?':
@@ -206,7 +215,7 @@ bool cmdlineGet(int argc, char** argv, char* filename) {
                     printf("Try:\n");
                     printf("%s --help\n", argv[0]);
                     printf("to see all options\n");
-                    errFlag = 1;
+                    args.errFlag = 1;
                     break;
 
                 case ':':
@@ -214,100 +223,118 @@ bool cmdlineGet(int argc, char** argv, char* filename) {
                     printf("Try:\n");
                     printf("%s --help\n", argv[0]);
                     printf("to see all options\n");
-                    errFlag = 1;
+                    args.errFlag = 1;
                     break;
 
                 default:
                     printf("?? getopt returned character code 0%o ??\n", c);
-                    errFlag = 1;
+                    args.errFlag = 1;
                     break;
              }
         }
 
-        if (helpFlag == 1 || errFlag == 1) return false;
-        else {
-            if (randomFlag == 1) {
-                random_course_list(RANDOM_COURSE_NUMBER, random_file_name);
-                strcpy(filename, random_file_name);
-                return true;
-            }
-            
-            else {
-                if (nameFlag != 1) {
-                    inputCheck = fetchFilename(argv, filename);
-                    if (inputCheck == 0) return false;
-                    return true;
-                }        
-                else return true;
-            }
-        }
-
+        return args;
+        
         #else
             if (argc == 1) {
                 // fetchFilename modifies the argument directly
-                inputCheck = fetchFilename(argv, filename);
-                if (inputCheck == 0) return false;
+                args.nameFlag = 0;
+                return args;
             }
             else if (argc == 2) {
-                if (argv[1] == NULL) return false;
-                strcpy(filename, argv[1]);
-                return true;
+                if (argv[1] == NULL) {
+                    args.errFlag = 1;
+                    return args;
+                }
+                strcpy(args.fileName, argv[1]);
+                args.nameFlag = 1;
+                return args;
             }
             
             else {
-                if (argv[1] == NULL) return false;
-                strcpy(filename, argv[1]);
-                if (strncmp(argv[2], "random", 4) == 0) {
-                    random_course_list(random_file_name);
-                    strcpy(filename, random_file_name);
+                if (argv[1] == NULL) {
+                    args.errFlag = 1;
+                    return args;
                 }
+                strcpy(args.fileName, argv[1]);
+                args.nameFlag = 1;
+
+                if (strncmp(argv[2], "random", 4) == 0)
+                    args.randomFlag = 1;
                 
-                return true;
+                return args;
             }
+            
     #endif
 
     fprintf(stderr, "This shouldn't happen! Report this bug to github.com/Gumperto/ehs if it does!\n");
-    return false;
+    args.errFlag = 1;
+    return args;
 }
 
 int starter(int argc, char** argv){
-    char filename[MAX_LENGTH];
+    // seeds random
+    srand(time(NULL));
+    int inputCheck = 1;
+
+    char random_file_name[] = "random_courses.txt";
     int targetCredits;
 
     int weekdayCheck[NUM_WEEKDAYS] = {1, 1, 1, 1, 1, 1};
     int periodCheck[NUM_PERIODS] = {1, 1, 1, 1, 1, 1};
 
-    if (cmdlineGet(argc, argv, filename) == false) return 1;
+    CMDArgs arguments = cmdlineGet(argc, argv);
+    if (arguments.helpFlag == 1 || arguments.errFlag == 1) return 1;
+    else {
+        if (arguments.randomFlag == 1) {
+            random_course_list(RANDOM_COURSE_NUMBER, random_file_name);
+            strcpy(arguments.fileName, random_file_name);
+        }
+        
+        else {
+            if (arguments.nameFlag != 1) {
+                inputCheck = fetchFilename(argv, arguments.fileName);
+                if (inputCheck == 0) return 1;
+            }        
+        }
+    }
 
     CourseList* courseList = createCourseList();
     if (courseList == NULL) return 1;
 
-    printf("Reading from file: %s\n", filename);
+    printf("Reading from file: %s\n", arguments.fileName);
 
-    readfile(courseList, filename);
+    readfile(courseList, arguments.fileName);
 
     resolveAvailabilityChecks(weekdayCheck, periodCheck);
     targetCredits = fetchTargetCredits(courseList);
 
-    Schedule* schedule = createSchedule();
-    if (schedule == NULL) return 1;
-
     MasterCheck* mastercheck = createMasterCheck();
+    if (mastercheck == NULL) return 1;
     fillMasterCheck(mastercheck, targetCredits, weekdayCheck, periodCheck);
 
-    printMasterChecks(mastercheck);
+    Schedule* dumbSchedule = createSchedule();
+    if (dumbSchedule == NULL) return 1;
 
-    maximizeCreditsDumb(schedule, courseList, mastercheck);
-    printf("Objective of schedule: %lf\n", objective(schedule, courseList, mastercheck));
+    maximizeCreditsDumb(dumbSchedule, courseList, mastercheck);
+    printf("Objective of dumb schedule: %lf\n", objective(dumbSchedule, courseList, mastercheck, arguments.verbose));
 
-    printGeneralCourseListInfo(courseList);
+    printCourseSlotsMatrix(dumbSchedule);
+    freeSchedule(dumbSchedule);
 
-    printGeneralScheduleInformation(schedule);    
-    printCourseListInSchedule(schedule);
-    printCourseSlotsMatrix(schedule);
+    Schedule* annealSchedule = simulatedAnnealing(
+                                courseList, 
+                                mastercheck, 
+                                10000, 
+                                0.995,
+                                arguments.verbose);
+    if (annealSchedule == NULL) return 1;
+
+    printCourseSlotsMatrix(annealSchedule);
+    freeSchedule(annealSchedule);
 
     freeCourseList(courseList);
-    freeSchedule(schedule);
+    freeMasterCheck(mastercheck);
     
     return 0;
 }
