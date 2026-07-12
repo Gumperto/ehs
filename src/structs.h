@@ -25,6 +25,19 @@ typedef enum {
     WEEKDAY
 }OccurrenceIndex;
 
+typedef enum {
+    ERROR = -1,
+    HELP = 0,
+    AUTO = 1,
+    MANUAL = 2
+}RunOptions;
+
+typedef enum {
+    ALGO_COUNT = 2,
+    GREEDY_ALG = 0,
+    SIMAN_ALG = 1
+}AlgoCode;
+
 typedef struct {
     int tuple[TWO];
 }Duo;
@@ -88,11 +101,29 @@ typedef struct {
 
 typedef struct {
     char fileName[MAX_LENGTH];
+    char algorithm[MAX_LENGTH];
+    int algorithmCode;
+
+    int pickedAlgorithmFlag;
+    int targetCreditsFlag;
+    int targetCredits;
+    int weekdayCheck[NUM_WEEKDAYS];
+    int weekdayFlag;
+    int periodCheck[NUM_PERIODS];
+    int periodFlag;
+
+    int cooldownSetFlag;
+    double cooldown;
+    int initTempSetFlag;
+    double initTemp;
+
     int randomFlag;
     int nameFlag;
-    int randomSeed;
     int helpFlag;
     int errFlag;
+
+    int randomSeedFlag;
+    int randomSeed;
     int verbose;
 }CMDArgs;
 
