@@ -8,28 +8,28 @@ void random_course_list(int samples, char* random_file_name){
     char first_word[][MAX_LENGTH] = {
         "Introduction to ",
         "Analysis of ",
-        "Help me ",
-        "Eating ",
+        "Great Books of ",
+        "Culture of ",
         "Advanced ",
         "Intermediate ",
         "History of ",
-        "Cirno's Perfect ",
+        "Key People in ",
         "Basics of ",
         "Critiques of "
     };
 
     char second_word[][MAX_LENGTH] = {
-        "Touhou",
-        "Dolphin",
-        "Eirin",
-        "Suisei",
-        "Pickle",
-        "Psyduck",
-        "Perfect Math Class",
-        "Kuril Islands",
-        "Madoka",
-        "Van Lang", 
-        "ArchBtw"
+        "History",
+        "Mathematics",
+        "Music",
+        "Modern Japan",
+        "Ancient Japan",
+        "Biology",
+        "Physics",
+        "Computer Science",
+        "Programming",
+        "Quantum Mechanics", 
+        "Art"
     };
 
     fptr = fopen(random_file_name,"w");
@@ -118,13 +118,13 @@ void random_course_list(int samples, char* random_file_name){
         }else if (cat == 1){
             fprintf(fptr, " %s ","Math");
         }else if (cat == 2){
-            fprintf(fptr, " %s ","CSCE");
+            fprintf(fptr, " %s ","Chemistry");
         }else if (cat == 3){
             fprintf(fptr, " %s ","VTubers");
         }else if (cat == 4){
             fprintf(fptr, " %s ","Social Sciences");
         }else if (cat == 5){
-            fprintf(fptr, " %s ","Clowning");
+            fprintf(fptr, " %s ","Physics");
         }else if (cat == 6){
             fprintf(fptr, " %s ","Global");
         }else {
