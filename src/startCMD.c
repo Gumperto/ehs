@@ -257,6 +257,7 @@ CMDArgs cmdlineGetArgs(int argc, char** argv) {
             {
                 {"random-gen",     optional_argument, NULL,  'r'},
                 {"data",           required_argument, NULL,  'd'},
+                {"output",         required_argument, NULL,  'o'},
                 {"seed",           required_argument, NULL,  's'},
                 {"help",           no_argument,       NULL,  'h'},
                 {"verbose",        no_argument,       NULL,  'v'},
@@ -277,7 +278,7 @@ CMDArgs cmdlineGetArgs(int argc, char** argv) {
             // :: after a letter means optional arg
             // : after a letter means required arg
             // just the character means no arguments needed
-            int c = getopt_long(argc, argv, "-:rd:hva:t:w:p:c:T:s:k:", long_options, &option_index);
+            int c = getopt_long(argc, argv, "-:rd:hva:t:w:p:c:T:s:k:o:", long_options, &option_index);
             if (c == -1)
               break;
 
@@ -307,6 +308,7 @@ CMDArgs cmdlineGetArgs(int argc, char** argv) {
                     printf("  %s\n      %s\n", "--help, -h", "print this menu");
                     printf("  %s\n      %s\n", "--verbose, -v", "print detailed execution results");
                     printf("  %s\n      %s\n", "--data=[path], -d [path]", "required; tells ehs what file to read");
+                    printf("  %s\n      %s\n", "--output=[name], -o [name]", "required; tells ehs what to output to");
                     printf("  %s\n      %s\n", "--random-gen, -r", "uses randomly generated data; you may set seed with --seed");
                     printf("  %s\n      %s\n", "--seed=[seed], -s [seed]", "required; seeds the random processes in the program with a number");
                     printf("  %s\n      %s\n", "--algorithm=[algo], -a [algo]", "required; choose out of [greedy | simulated_annealing]");
@@ -332,6 +334,15 @@ CMDArgs cmdlineGetArgs(int argc, char** argv) {
                     }
                     strcpy(args.fileName, optarg);
                     args.nameFlag = 1;
+                    break;
+
+                case 'o':
+                    if (optarg == NULL) {
+                        args.errFlag = 1;
+                        break;
+                    }
+                    strcpy(args.outputName, optarg);
+                    args.outputFlag = 1;
                     break;
 
                 case 's':
@@ -415,8 +426,8 @@ CMDArgs cmdlineGetArgs(int argc, char** argv) {
                     }
                     args.cooldownSetFlag = 1;
                     args.cooldown = atof(optarg);
-                    if (args.cooldown <= 0) {
-                        fprintf(stderr, "Cooldown is > 0! Exiting...\n");
+                    if (args.cooldown < 0) {
+                        fprintf(stderr, "Cooldown is >= 0! Exiting...\n");
                         args.errFlag = 1;
                     }
                     break;
@@ -428,8 +439,8 @@ CMDArgs cmdlineGetArgs(int argc, char** argv) {
                     }
                     args.initTempSetFlag = 1;
                     args.initTemp = atof(optarg);
-                    if (args.initTemp <= 0) {
-                        fprintf(stderr, "Init temp is > 0! Exiting...\n");
+                    if (args.initTemp < 0) {
+                        fprintf(stderr, "Init temp is >= 0! Exiting...\n");
                         args.errFlag = 1;
                     }
                     break;
@@ -587,11 +598,12 @@ int runAuto(const CMDArgs args) {
     readfile(courseList, filename);
 
     if (args.algorithmCode == GREEDY_ALG) {
-        maximizeCreditsDumb__wrapper(courseList, mastercheck, args.randomSeed, hyperparams);
+        maximizeCreditsDumb__wrapper(courseList, mastercheck, args.randomSeed, hyperparams, args);
     }
 
     else if (args.algorithmCode == SIMAN_ALG) {
-        simulatedAnnealing__wrapper(courseList, mastercheck, args.initTemp, args.cooldown, args.k_max, args.verbose, args.randomSeed, hyperparams);
+        simulatedAnnealing__wrapper(courseList, mastercheck, args.initTemp, args.cooldown, 
+                                    args.k_max, args.verbose, args.randomSeed, hyperparams, args);
     }
 
     else {
@@ -674,12 +686,12 @@ int runManual(char* executablePath, const CMDArgs args) {
     fillMasterCheck(mastercheck, targetCredits, weekdayCheck, periodCheck);
 
     if (algoCode == GREEDY_ALG) {
-        maximizeCreditsDumb__wrapper(courseList, mastercheck, args.randomSeed, hyper);
+        maximizeCreditsDumb__wrapper(courseList, mastercheck, args.randomSeed, hyper, args);
     }
 
     else if (algoCode == SIMAN_ALG) {
         simulatedAnnealing__wrapper(courseList, mastercheck, hyper.init_temp_siman, hyper.cooldown_siman,
-                                    hyper.k_max, args.verbose, args.randomSeed, hyper);
+                                    hyper.k_max, args.verbose, args.randomSeed, hyper, args);
     }
 
     else {

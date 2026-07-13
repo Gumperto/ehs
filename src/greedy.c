@@ -31,7 +31,7 @@ Schedule* maximizeCreditsDumb(CourseList* courseList, MasterCheck* mastercheck) 
     return schedule;
 }
 
-void maximizeCreditsDumb__wrapper(CourseList* courseList, MasterCheck* mastercheck, int seed, const Hyperparams hyperparams) {
+void maximizeCreditsDumb__wrapper(CourseList* courseList, MasterCheck* mastercheck, int seed, const Hyperparams hyperparams, CMDArgs args) {
     struct timespec start, end;
     clock_gettime(CLOCK_MONOTONIC, &start);
     Schedule* schedule = maximizeCreditsDumb(courseList, mastercheck);
@@ -40,7 +40,7 @@ void maximizeCreditsDumb__wrapper(CourseList* courseList, MasterCheck* masterche
     double elapsed = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / SEC_TO_NANOSEC;
     double finalScore = objective(schedule, courseList, mastercheck);
 
-    addResultToFile(GREEDY_ALG, seed, hyperparams, finalScore, elapsed);
+    addResultToFile(GREEDY_ALG, seed, hyperparams, finalScore, elapsed, args);
     printCourseSlotsMatrix(schedule);
     freeSchedule(schedule);
 }

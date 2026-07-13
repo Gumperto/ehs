@@ -22,11 +22,17 @@ For data analysis: This directory offers a dead simple bash script
 that generates the environment so the analysis scripts know where 
 everything lives
 
-To do so, simply copy:
+To do so, after a `git clone` go to the root level, compiles the executable,
+and generates the .env file. The following command does all 3:
 ```
+cd ehs
+make
 chmod +x generate_env.sh
 ./generate_env.sh
 ```
+
+> [!WARNING]
+> I can only guarantee the results of this on Unix systems!
 
 ## Build instructions
 1. Open your terminal application of choice

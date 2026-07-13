@@ -28,6 +28,6 @@ $(BUILD_DIR)/%.c.o: %.c
 
 # Nukes ./build
 clean:
-	rm -rf $(BUILD_DIR) results_*.csv .env
+	rm -rf $(BUILD_DIR) *.csv *.png
 
 -include $(DEPS)

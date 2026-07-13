@@ -101,6 +101,8 @@ typedef struct {
 
 typedef struct {
     char fileName[MAX_LENGTH];
+    char outputName[MAX_LENGTH];
+
     char algorithm[MAX_LENGTH];
     int algorithmCode;
 
@@ -121,6 +123,8 @@ typedef struct {
 
     int randomFlag;
     int nameFlag;
+    int outputFlag;
+
     int helpFlag;
     int errFlag;
 

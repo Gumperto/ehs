@@ -124,8 +124,7 @@ Schedule* simulatedAnnealing(CourseList* courseList, MasterCheck* mastercheck,
 
 void simulatedAnnealing__wrapper(CourseList* courseList, MasterCheck* mastercheck,
                                  double INIT_TEMP, double COOLDOWN, int k_max, int verbose,
-                                 int seed, const Hyperparams hyperparams) {
-    
+                                 int seed, const Hyperparams hyperparams, CMDArgs args) {
     struct timespec start, end;
     clock_gettime(CLOCK_MONOTONIC, &start);
     Schedule* schedule = simulatedAnnealing(courseList, mastercheck, INIT_TEMP, 
@@ -135,7 +134,7 @@ void simulatedAnnealing__wrapper(CourseList* courseList, MasterCheck* masterchec
     double elapsed = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / SEC_TO_NANOSEC;
     double finalScore = objective(schedule, courseList, mastercheck);
 
-    addResultToFile(SIMAN_ALG, seed, hyperparams, finalScore, elapsed);
+    addResultToFile(SIMAN_ALG, seed, hyperparams, finalScore, elapsed, args);
     printCourseSlotsMatrix(schedule);
     free(schedule);
 }
