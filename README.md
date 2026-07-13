@@ -18,6 +18,16 @@ The only way to run ehs is by building from source.
 - A working C compiler: `gcc >= 16.1.1` (probably not that high but that's the version I own lol) 
 - (more as we add libraries)
 
+For data analysis: This directory offers a dead simple bash script 
+that generates the environment so the analysis scripts know where 
+everything lives
+
+To do so, simply copy:
+```
+chmod +x generate_env.sh
+./generate_env.sh
+```
+
 ## Build instructions
 1. Open your terminal application of choice
 2. In your desired directory, clone the repo and navigate to the `ehs` directory:

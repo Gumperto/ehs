@@ -6,3 +6,5 @@ slides/presentation.pdf
 a.out
 random_courses.txt
 random_course_list.txt
+results_*.csv
+.env
