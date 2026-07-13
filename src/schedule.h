@@ -28,7 +28,7 @@ void freeSchedule(Schedule* schedule);
 
 void initMasterCheck(MasterCheck* mastercheck);
 MasterCheck* createMasterCheck();
-void fillMasterCheck(MasterCheck* mastercheck, int targetCredits, int* weekdayCheck, int* periodCheck);
+void fillMasterCheck(MasterCheck* mastercheck, int targetCredits, const int* weekdayCheck, const int* periodCheck);
 bool clearMasterCheck(MasterCheck* mastercheck);
 void freeMasterCheck(MasterCheck* mastercheck);
 

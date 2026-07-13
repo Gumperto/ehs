@@ -1,3 +1,4 @@
+#include <math.h>
 #ifdef __unix__
     #include <unistd.h>
     #include <getopt.h>
@@ -20,6 +21,11 @@
 
 #define DEFAULT_TEMP_SIMAN 5000
 #define DEFAULT_COOLDOWN_SIMAN 0.995
+
+typedef struct {
+    double init_temp_siman;
+    double cooldown_siman;
+}Hyperparams;
 
 // does not set default name; if not supplied, exit
 int fetchFilename(char* executablePath, char* filename) {
@@ -49,47 +55,52 @@ int fetchFilename(char* executablePath, char* filename) {
         fprintf(stderr, "Invalid or empty input. Exiting...\n");
         return 0;
     }
+    
+    printf("\n");
+
     return 1;
 }
 
 // sets all to 1 by default
-void resolveAvailabilityChecks(CMDArgs args) {
+void resolveAvailabilityChecks(int* weekdayCheck, int* periodCheck, const CMDArgs args) {
     char temp[MAX_LENGTH];
     char delimiter[] = " ";
 
     // Read into periodCheck
     if (args.periodFlag == 0) {
-        args.periodFlag = 1;
-        printf("Input all periods you do not want to attend, separated by commas ',': ");
+        printf("Input all periods you do not want to attend, separated by commas ',' (e.g 1,2,3): ");
         fgets(temp, MAX_LENGTH, stdin);
         temp[strcspn(temp, "\n")] = '\0';
         
-        parsePeriodList(temp, args.periodCheck);
-    }
-    // Read into weekdayCheck
-    if (args.weekdayFlag == 0) {
-        args.weekdayFlag = 1;
-        printf("Input all weekdays you do not want to attend, separated by commas ',': ");
-        fgets(temp, MAX_LENGTH, stdin);
-        temp[strcspn(temp, "\n")] = '\0';
-        
-        parseWeekdayList(temp, args.weekdayCheck);
+        parsePeriodList(temp, periodCheck);
     }
 
-    printf("\n\n");
+    printf("\n");
+
+    // Read into weekdayCheck
+    if (args.weekdayFlag == 0) {
+        printf("Input all weekdays you do not want to attend, separated by commas ',' (e.g Mon,Sat): ");
+        fgets(temp, MAX_LENGTH, stdin);
+        temp[strcspn(temp, "\n")] = '\0';
+        
+        parseWeekdayList(temp, weekdayCheck);
+    }
+
+    printf("\n");
 }
 
 // returns a bad estimate by default based on courseList
-void fetchTargetCredits(CMDArgs args, CourseList* courseList) {
+int fetchTargetCredits(const CourseList* courseList) {
+    int targetCredits = -1;
     char buffer[MAX_LENGTH];
     printf("How many credits are you aiming for this semester (leaving this empty defaults to a VERY bad estimate): ");
     
     // Actually scan the target credits
     fgets(buffer, MAX_LENGTH - 1, stdin);
-    int check = sscanf(buffer, "%d", &args.targetCredits);
+    int check = sscanf(buffer, "%d", &targetCredits);
 
     // If no input was given or if the input sucks
-    if (check != 1 || args.targetCredits <= 0) {
+    if (check != 1 || targetCredits <= 0) {
         printf("Invalid or empty input. Calculating default value...\n");
         int courseCap = min(courseList->courseCountTotal, RANDOM_COURSE_NUMBER);
         int totalCreditsInCourseList = 0;
@@ -97,79 +108,136 @@ void fetchTargetCredits(CMDArgs args, CourseList* courseList) {
             totalCreditsInCourseList += courseList->courseList[course]->credits;
 
         // 8 semesters
-        args.targetCredits = totalCreditsInCourseList / 8;
+        targetCredits = totalCreditsInCourseList / 8;
 
-        fprintf(stderr, "Using very rough estimate: %d\n\n", args.targetCredits);
+        fprintf(stderr, "Using very rough estimate: %d\n\n", targetCredits);
     }
+    
+    printf("\n");
+
+    return targetCredits;
 }
 
 // returns SIMAN_ALG by default
-void fetchAlgorithm(CMDArgs args) {
+int fetchAlgorithm() {
+    int algoCode;
+
     char algo_list[][MAX_LENGTH] = {"greedy", "simulated_annealing"};
     char buffer[MAX_LENGTH];
-    printf("What kind of algorithm do you want to use?"
-           "What we have to offer (leaving empty uses %s by default):", algo_list[SIMAN_ALG]);
+    printf("What kind of algorithm do you want to use?\n"
+           "What we have to offer (leaving empty uses %s by default): ", algo_list[SIMAN_ALG]);
 
     for (int i = GREEDY_ALG; i < ALGO_COUNT; i++) {
         printf("%s", algo_list[i]);
-        if (i == ALGO_COUNT - 1) printf(", ");
+        if (i != ALGO_COUNT - 1) printf(", ");
     }
-    printf("\n");
+
+    printf("\n\nInput (exact match): ");
 
     // Actually scan the algorithm
     fgets(buffer, MAX_LENGTH - 1, stdin);
-    int check = sscanf(buffer, "%s", args.algorithm);
+    int check = sscanf(buffer, "%s", buffer);
 
     // If no input was given or if the input sucks
     if (check != 1) {
-        fprintf(stderr, "Invalid or empty input; using simulated annealing by default\n");
-        args.algorithmCode = SIMAN_ALG;
+        fprintf(stderr, "Invalid or empty input; using simulated annealing by default\n\n");
+        algoCode = SIMAN_ALG;
+        return algoCode;
     }
 
-    if (strcmp(args.algorithm, algo_list[GREEDY_ALG]) == 0)
-        args.algorithmCode = GREEDY_ALG;
+    if (strcmp(buffer, algo_list[GREEDY_ALG]) == 0)
+        algoCode = GREEDY_ALG;
 
-    else if (strcmp(args.algorithm, algo_list[SIMAN_ALG]) == 0 || 
-             strcmp(args.algorithm, "siman") == 0 ||  
-             strcmp(args.algorithm, "simulated_anneal") == 0 ||
-             strcmp(args.algorithm, "sim_anneal") == 0)
-        args.algorithmCode = SIMAN_ALG;
+    else if (strcmp(buffer, algo_list[SIMAN_ALG]) == 0 || 
+             strcmp(buffer, "siman") == 0 ||  
+             strcmp(buffer, "simulated_anneal") == 0 ||
+             strcmp(buffer, "sim_anneal") == 0)
+        algoCode = SIMAN_ALG;
 
     else {
-        fprintf(stderr, "Invalid or empty input; using simulated annealing by default\n");
-        args.algorithmCode = SIMAN_ALG;
+        fprintf(stderr, "Invalid or empty input; using simulated annealing by default\n\n");
+        algoCode = SIMAN_ALG;
     }
+
+    printf("\n");
+
+    return algoCode;
 }
 
 // fetches a generic double safely with default
-void fetchGenericDoubleWithDefault(char* stdprmpt, char* var_name, char* purpose,
-                                   char* stderror, double scan_value, double defaultVal) {
+// upper and lower bounds are exclusive (not inclusive)
+double fetchGenericDoubleWithDefault(const char* stdprmpt, const char* var_name, const char* purpose,
+                                     const char* stderror, double defaultVal, 
+                                     double upperbound, double lowerbound) {
+    double returnVal;
     char buffer[MAX_LENGTH];
-    fgets(buffer, MAX_LENGTH - 1, stdin);
 
     printf("%s %s for %s: ", stdprmpt, var_name, purpose);
-    int check = sscanf(buffer, "%lf", &scan_value);
+    
+    fgets(buffer, MAX_LENGTH - 1, stdin);
+    int check = sscanf(buffer, "%lf", &returnVal);
 
     // If no input was given or if the input sucks
-    if (check != 1) {
+    if (check != 1 || returnVal > upperbound || returnVal < lowerbound) {
         fprintf(stderr, "%s; using %lf by default\n", stderror, defaultVal);
-        scan_value = defaultVal;
+        returnVal = defaultVal;
     }
+
+    return returnVal;
 }
 
 // default depends on the algorithm
-void fetchHyperparams(CMDArgs args) {
-    char buffer[MAX_LENGTH];
-
+// also fetches from args if they're already set
+Hyperparams fetchHyperparams(const int algoCode, const CMDArgs args) {
+    Hyperparams hyper = {0};
     char stdprmpt[] = "Input";
     char stderror[] = "Invalid or empty input";
 
-    if (args.algorithmCode == SIMAN_ALG) {
-        char purpose[] = "simulated_annealing";
-        fetchGenericDoubleWithDefault(stdprmpt, "InitTemp", purpose, stderror, args.initTemp, DEFAULT_TEMP_SIMAN);
-        fetchGenericDoubleWithDefault(stdprmpt, "Cooldown", purpose, stderror, args.cooldown, DEFAULT_COOLDOWN_SIMAN);
+    if (args.pickedAlgorithmFlag == 1) {
+        if (algoCode == SIMAN_ALG) {
+            hyper.init_temp_siman = args.initTemp;
+            hyper.cooldown_siman = args.cooldown;
+            return hyper;
+        }
+
+        // ...
+        // add more if more
+        // ...
+
+        else
+            return hyper;
     }
-    // add more if more
+
+    else {
+        if (algoCode == SIMAN_ALG) {
+            char purpose[] = "simulated_annealing";
+            hyper.init_temp_siman = fetchGenericDoubleWithDefault(stdprmpt, 
+                                                                  "init_temp_siman", 
+                                                                  purpose, 
+                                                                  stderror, 
+                                                                  DEFAULT_TEMP_SIMAN,
+                                                                  INFINITY,
+                                                                  0);
+            hyper.cooldown_siman = fetchGenericDoubleWithDefault(stdprmpt, 
+                                                                 "cooldown_siman", 
+                                                                 purpose, 
+                                                                 stderror, 
+                                                                 DEFAULT_COOLDOWN_SIMAN,
+                                                                 INFINITY,
+                                                                 0);
+            printf("\n");
+            return hyper;
+        }
+        
+        // ...
+        // add more if more
+        // ...
+
+        else {
+            printf("\n");
+            return hyper;
+        }
+    }
 }
 
 CMDArgs cmdlineGetArgs(int argc, char** argv) {
@@ -447,7 +515,7 @@ int configureRun(int argc, char** argv, CMDArgs* args) {
         args->algorithmCode = SIMAN_ALG;
         if (args->cooldownSetFlag == 1 && args->initTempSetFlag == 1) return AUTO;
         else {
-            fprintf(stderr, "simulated_anneal requires BOTH --cooldown and --temp to be supplied\n");
+            fprintf(stderr, "simulated_annealing requires BOTH --cooldown and --temp to be supplied\n");
             return ERROR;
         }
     }
@@ -465,11 +533,14 @@ int configureRun(int argc, char** argv, CMDArgs* args) {
     }
 }
 
-int runAuto(CMDArgs args) {
+int runAuto(const CMDArgs args) {
     // 0 here is good, 1 is bad because it returns all to main
     char filename[MAX_LENGTH];
     char random_file_name[] = "random_course_list.txt";
     
+    // If it's a runAuto either randomFlag OR nameFlag is on
+    // We can of course be defensive here and code in a condition
+    // to check if something went wrong anyways. Maybe later
     if (args.randomFlag == 1) {
         random_course_list(RANDOM_COURSE_NUMBER, random_file_name);
         strcpy(filename, random_file_name);
@@ -511,10 +582,19 @@ int runAuto(CMDArgs args) {
     return 0;
 }
 
-int runManual(char* executablePath, CMDArgs args) {
+int runManual(char* executablePath, const CMDArgs args) {
     // 0 here is good, 1 is bad because it returns all to main
     char filename[MAX_LENGTH];
     char random_file_name[] = "random_course_list.txt";
+
+    int weekdayCheck[NUM_WEEKDAYS];
+    for (int i = MONDAY; i < NUM_WEEKDAYS; i++) weekdayCheck[i] = 1;
+    int periodCheck[NUM_PERIODS];
+    for (int i = PERIOD_1; i < NUM_PERIODS; i++) periodCheck[i] = 1;
+
+    int targetCredits;
+    int algoCode;
+    Hyperparams hyper;
 
     // Resolve name if not
     if (args.randomFlag == 1) {
@@ -538,50 +618,43 @@ int runManual(char* executablePath, CMDArgs args) {
     readfile(courseList, filename);
 
     // Resolve the bad slots if not
-    resolveAvailabilityChecks(args);
+    resolveAvailabilityChecks(weekdayCheck, periodCheck, args);
 
     printf("Days remaining: ");
     for (int weekday = MONDAY; weekday < NUM_WEEKDAYS; weekday++)
-        if (args.weekdayCheck[weekday] == 1) printf("%s ", stringNumberToWeek(weekday));
+        if (weekdayCheck[weekday] == 1) printf("%s ", stringNumberToWeek(weekday));
 
     printf("\n");
 
     printf("Periods remaining: ");
     for (int period = PERIOD_1; period < NUM_PERIODS; period++)
-        if (args.periodCheck[period] == 1) printf("%d ", period + 1);
+        if (periodCheck[period] == 1) printf("%d ", period + 1);
+
+    printf("\n\n");
 
     // Resolve target credit
-    if (args.targetCreditsFlag == 0) {
-        args.targetCreditsFlag = 1;
-        fetchTargetCredits(args, courseList);
-    }
+    if (args.targetCreditsFlag == 1) targetCredits = args.targetCredits;
+    else targetCredits = fetchTargetCredits(courseList);
 
-    // Resolve algorithm
-    if (args.pickedAlgorithmFlag == 0) {
-        args.pickedAlgorithmFlag = 1;
-        fetchAlgorithm(args);
-    }
-
-    // Resolves hyperparams
-    if (args.algorithmCode == GREEDY_ALG) {}
-    else if (args.algorithmCode == SIMAN_ALG) {
-        fetchHyperparams(args);
-    }
+    // Resolve algorithm and its associated hyperparam
+    if (args.pickedAlgorithmFlag == 1) algoCode = args.algorithmCode;
+    else algoCode = fetchAlgorithm();
+    hyper = fetchHyperparams(algoCode, args);
 
     MasterCheck* mastercheck = createMasterCheck();
     if (mastercheck == NULL) {
         freeCourseList(courseList);
         return 1;
     }
-    fillMasterCheck(mastercheck, args.targetCredits, args.weekdayCheck, args.periodCheck);
+    fillMasterCheck(mastercheck, targetCredits, weekdayCheck, periodCheck);
 
-    if (args.algorithmCode == GREEDY_ALG) {
+    if (algoCode == GREEDY_ALG) {
         maximizeCreditsDumb__wrapper(courseList, mastercheck, args.verbose);
     }
 
-    else if (args.algorithmCode == SIMAN_ALG) {
-        simulatedAnnealing__wrapper(courseList, mastercheck, args.initTemp, 
-                                    args.cooldown, args.verbose);
+    else if (algoCode == SIMAN_ALG) {
+        simulatedAnnealing__wrapper(courseList, mastercheck, hyper.init_temp_siman, 
+                                    hyper.cooldown_siman, args.verbose);
     }
 
     else {

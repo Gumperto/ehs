@@ -4,6 +4,9 @@
 
 int starter(int argc, char** argv){
     CMDArgs args;
+    // This is somewhat of an anti-pattern; we don't really want to modify args
+    // if we can help it, but this is just so the program has a place to store it all
+    // This design decision might be fixed later
     int config = configureRun(argc, argv, &args);
 
     if (config == ERROR) {
@@ -19,8 +22,8 @@ int starter(int argc, char** argv){
         runAuto(args);
     }
     if (config == MANUAL) {
+        printf("You are running manual\n");
         runManual(argv[0], args);
-        printf("You are running automatic\n");
     }
    
     return 0;

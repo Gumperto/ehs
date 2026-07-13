@@ -3,7 +3,7 @@
 
 #include <stddef.h>
 
-#define RANDOM_COURSE_NUMBER 128
+#define RANDOM_COURSE_NUMBER 512
 #define MAX_LENGTH 256
 #define MAX_TRIALS_RANDOM 1000
 

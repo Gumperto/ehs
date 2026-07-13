@@ -70,8 +70,6 @@ void parseWeekdayList(const char *optargStr, int* weekdayCheck) {
         increment++;
         token = strtok(NULL, delimiter);
     }
-
-    printf("\n");
 }
 
 void parsePeriodList(const char *optargStr, int* periodCheck) {
@@ -99,8 +97,6 @@ void parsePeriodList(const char *optargStr, int* periodCheck) {
         increment++;
         token = strtok(NULL, delimiter);
     }
-    
-    printf("\n");
 }
 
 // Parse fake occurence dictionaries 

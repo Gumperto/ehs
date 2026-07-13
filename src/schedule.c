@@ -271,7 +271,7 @@ MasterCheck* createMasterCheck() {
     return mastercheck;
 }
 
-void fillMasterCheck(MasterCheck* mastercheck, int targetCredits, int* weekdayCheck, int* periodCheck) {
+void fillMasterCheck(MasterCheck* mastercheck, int targetCredits, const int* weekdayCheck, const int* periodCheck) {
     for (int weekday = MONDAY; weekday < NUM_WEEKDAYS; weekday++)
         mastercheck->weekdayCheck[weekday] = weekdayCheck[weekday];
 
