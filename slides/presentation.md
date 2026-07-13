@@ -325,7 +325,7 @@ Findings
 ===
 <!-- font_size: 2 -->
 Here's a non-vanity version of it:
-![](sweep_temp.png)
+![](../assets/sweep_temp.png)
 
 <!-- end_slide -->
 
@@ -365,7 +365,7 @@ Findings
 ===
 <!-- font_size: 2 -->
 Here's a non-vanity version of it:
-![](sweep_cd.png)
+![](../assets/sweep_cd.png)
 
 <!-- end_slide -->
 
@@ -378,7 +378,7 @@ except near cooldown = 1 (when temperature would basically not change and result
 walk)
 
 To confirm, we varied init_temp and cooldown at once (no fancy ASCII here)
-![](sweep_cd_temp.png)
+![](../assets/sweep_cd_temp.png)
 
 <!-- end_slide -->
 
@@ -426,7 +426,7 @@ of data points.
 SimAn reached good performance at around the hundreds (~the order of magnitude
 of init_temp, which was set at 300.0)
 
-![](sweep_kmax.png)
+![](../assets/sweep_kmax.png)
 
 <!-- end_slide -->
 

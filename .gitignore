@@ -10,3 +10,4 @@ random_course_list.txt
 .env
 *.png
 __pycache__/
+/assets
