@@ -12,7 +12,8 @@
 #include "debugCMD.h"
 
 #define MAX_ITERATIONS 10000
-#define TEMP_THRESHOLD 0.001
+#define MIN_TEMP 0.001
+#define MAX_TEMP 1000000
 
 typedef enum {
     REMOVE = 0,
@@ -104,16 +105,18 @@ Schedule* simulatedAnnealing(CourseList* courseList, MasterCheck* mastercheck,
         temperature *= COOLDOWN;
         
         // This is so it doesn't cool down immediately
-        if (temperature < TEMP_THRESHOLD) temperature = TEMP_THRESHOLD;
+        if (temperature < MIN_TEMP) temperature = MIN_TEMP;
+        // and this is to ensure it's not an inf bug when testing on edge cases
+        if (temperature > MAX_TEMP) temperature = MAX_TEMP;
         
-        if (verbose) printf("\nCurrent cost is: %lf\n", new_cost);
-
-        if (i % 100 == 0) {
-            printf("Iteration: %d\n", i);
-            printf("Temperature: %lf\n", temperature);
-            printf("Cooldown: %lf\n", COOLDOWN);
-        }
-
+        if (verbose) {
+            printf("\nCurrent cost is: %lf\n", new_cost);
+            if (i % 100 == 0) {
+                printf("Iteration: %d\n", i);
+                printf("Temperature: %lf\n", temperature);
+                printf("Cooldown: %lf\n", COOLDOWN);
+            }
+         }
     }
     
     printf("SA algorithm arrived at schedule with cost: %lf\n", current_cost);
