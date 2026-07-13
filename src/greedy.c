@@ -8,7 +8,7 @@
 #include "debugCMD.h"
 
 // O(nlogn) where n is number of courses
-Schedule* maximizeCreditsDumb(CourseList* courseList, MasterCheck* mastercheck, int verbose) {
+Schedule* maximizeCreditsDumb(CourseList* courseList, MasterCheck* mastercheck) {
     Schedule* schedule = createSchedule();
     if (schedule == NULL) return NULL;
 
@@ -23,13 +23,13 @@ Schedule* maximizeCreditsDumb(CourseList* courseList, MasterCheck* mastercheck, 
             continue;
         }
     }
-    double cost = objective(schedule, courseList, mastercheck, verbose);
+    double cost = objective(schedule, courseList, mastercheck);
     printf("Greedy (credits) algorithm arrived at schedule with cost: %lf\n", cost);
     return schedule;
 }
 
-void maximizeCreditsDumb__wrapper(CourseList* courseList, MasterCheck* mastercheck, int verbose) {
-    Schedule* schedule = maximizeCreditsDumb(courseList, mastercheck, verbose);
+void maximizeCreditsDumb__wrapper(CourseList* courseList, MasterCheck* mastercheck) {
+    Schedule* schedule = maximizeCreditsDumb(courseList, mastercheck);
     printCourseSlotsMatrix(schedule);
     freeSchedule(schedule);
 }

@@ -1,6 +1,5 @@
 #include <limits.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include <math.h>
 #include "structs.h"
 #include "conversion.h"
@@ -16,7 +15,7 @@
 #define BAD_PERIOD_COUNT 3
 #define EXPONENTIAL_BASE_BURNOUT 10
 
-double gapPenalty(Schedule* schedule, int verboseFlag) {
+double gapPenalty(Schedule* schedule) {
     double penalty = 0;
     for (int q = QUARTER_ONE; q < SEMESTER_DURATION; q++) {
         for (int wd = MONDAY; wd < NUM_WEEKDAYS; wd++) {
@@ -49,11 +48,10 @@ double gapPenalty(Schedule* schedule, int verboseFlag) {
             }
         }
     }
-    if (verboseFlag) printf("gapPenalty: %lf\n", penalty);
     return penalty;
 }
 
-double commutePenalty(Schedule* schedule, int verboseFlag) {
+double commutePenalty(Schedule* schedule) {
     double penalty = 0;
     for (int q = QUARTER_ONE; q < SEMESTER_DURATION; q++) {
         for (int wd = MONDAY; wd < NUM_WEEKDAYS; wd++) {
@@ -66,19 +64,17 @@ double commutePenalty(Schedule* schedule, int verboseFlag) {
             }
         }
     }
-    if (verboseFlag) printf("commutePenalty: %lf\n", penalty);
     return penalty;
 }
 
-double creditDivergencePenalty(Schedule* schedule, MasterCheck* mastercheck, int verboseFlag) {
+double creditDivergencePenalty(Schedule* schedule, MasterCheck* mastercheck) {
     double penalty = 0;
     int distance = abs(schedule->totalCredits - mastercheck->targetCredits);
     penalty += distance * distance * BAD_PENALTY;
-    if (verboseFlag) printf("creditDivergencePenalty: %lf\n", penalty);
     return penalty;
 }
 
-double badSlotPenalty(Schedule* schedule, MasterCheck* mastercheck, int verboseFlag) {
+double badSlotPenalty(Schedule* schedule, MasterCheck* mastercheck) {
     double penalty = 0;
     for (int q = QUARTER_ONE; q < SEMESTER_DURATION; q++) {
         int badSlotCount = 0;
@@ -90,11 +86,10 @@ double badSlotPenalty(Schedule* schedule, MasterCheck* mastercheck, int verboseF
         }
         penalty += REALLY_BAD_PENALTY * badSlotCount * badSlotCount;
     }
-    if (verboseFlag) printf("badSlotPenalty: %lf\n", penalty);
     return penalty;
 }
 
-double requirementPenalty(Schedule* schedule, CourseList* courseList, int verboseFlag) {
+double requirementPenalty(Schedule* schedule, CourseList* courseList) {
     double penalty = 0;
 
     // division by 8 to roughly estimate 8 semesters = 4 years * 2 semesters/year of college
@@ -102,12 +97,11 @@ double requirementPenalty(Schedule* schedule, CourseList* courseList, int verbos
     if (distance < 0) penalty = 0;
     else penalty = BAD_PENALTY * distance * distance;
 
-    if (verboseFlag) printf("requirementPenalty: %lf\n", penalty);
 
     return penalty;
 }
 
-double courseCountPenalty(Schedule* schedule, int verboseFlag) {
+double courseCountPenalty(Schedule* schedule) {
     double penalty = 0;
     for (int q = QUARTER_ONE; q < SEMESTER_DURATION; q++) {
         for (int wd = MONDAY; wd < NUM_WEEKDAYS; wd++) {
@@ -120,7 +114,6 @@ double courseCountPenalty(Schedule* schedule, int verboseFlag) {
                 else if (periodCount > BAD_PERIOD_COUNT) penalty += pow(EXPONENTIAL_BASE_BURNOUT, periodCount - BAD_PERIOD_COUNT) * BAD_PENALTY;
         }
     }
-    if (verboseFlag) printf("courseCountPenalty: %lf\n", penalty);
     return penalty;
 }
 
@@ -137,17 +130,17 @@ double courseCountPenalty(Schedule* schedule, int verboseFlag) {
 *                                    required courses / 8. This difference is squared and then multiplied with BAD_PENALTY
 * - 1 slot taken in a day or >3 taken in a day: only 1 slot taken: BAD_PENALTY
 *                                               >3 slot taken: exponential penalty for each course over the 3rd, I *know* how terrible this is */
-double objective(Schedule* schedule, CourseList* courseList, MasterCheck* mastercheck, int verboseFlag) {
+double objective(Schedule* schedule, CourseList* courseList, MasterCheck* mastercheck) {
     double score = 0;
     if (schedule->courseCountTaken == 0 || schedule->totalCredits == 0)
          score += ASTRONOMICAL_PENALTY;
 
-    score += gapPenalty(schedule, verboseFlag);
-    score += commutePenalty(schedule, verboseFlag);
-    score += creditDivergencePenalty(schedule, mastercheck, verboseFlag);
-    score += badSlotPenalty(schedule, mastercheck, verboseFlag);
-    score += requirementPenalty(schedule, courseList, verboseFlag);
-    score += courseCountPenalty(schedule, verboseFlag);
+    score += gapPenalty(schedule);
+    score += commutePenalty(schedule);
+    score += creditDivergencePenalty(schedule, mastercheck);
+    score += badSlotPenalty(schedule, mastercheck);
+    score += requirementPenalty(schedule, courseList);
+    score += courseCountPenalty(schedule);
 
     return score;
 }

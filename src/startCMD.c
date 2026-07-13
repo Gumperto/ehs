@@ -14,7 +14,6 @@
 #include "stringOps.h"
 #include "schedule.h"
 #include "readfile.h"
-#include "debugCMD.h"
 #include "greedy.h"
 #include "random_course_list.h"
 #include "simulated_annealing.h"
@@ -561,7 +560,7 @@ int runAuto(const CMDArgs args) {
     readfile(courseList, filename);
 
     if (args.algorithmCode == GREEDY_ALG) {
-        maximizeCreditsDumb__wrapper(courseList, mastercheck, args.verbose);
+        maximizeCreditsDumb__wrapper(courseList, mastercheck);
     }
 
     else if (args.algorithmCode == SIMAN_ALG) {
@@ -649,7 +648,7 @@ int runManual(char* executablePath, const CMDArgs args) {
     fillMasterCheck(mastercheck, targetCredits, weekdayCheck, periodCheck);
 
     if (algoCode == GREEDY_ALG) {
-        maximizeCreditsDumb__wrapper(courseList, mastercheck, args.verbose);
+        maximizeCreditsDumb__wrapper(courseList, mastercheck);
     }
 
     else if (algoCode == SIMAN_ALG) {

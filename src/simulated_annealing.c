@@ -82,10 +82,8 @@ Schedule* simulatedAnnealing(CourseList* courseList, MasterCheck* mastercheck,
         if (neighbor == NULL) return NULL;
 
         // calculate cost of current solution and cost of new solution to compare
-        current_cost = objective(current, courseList, mastercheck, verbose);
-        new_cost = objective(neighbor, courseList, mastercheck, verbose);
-
-        if (verbose) printf("Delta: new_cost - current %lf\n", new_cost - current_cost);
+        current_cost = objective(current, courseList, mastercheck);
+        new_cost = objective(neighbor, courseList, mastercheck);
 
         // a probability to help not looping forever
         p_accept = acceptanceProbability(current_cost, new_cost, temperature);
@@ -110,8 +108,8 @@ Schedule* simulatedAnnealing(CourseList* courseList, MasterCheck* mastercheck,
         if (temperature > MAX_TEMP) temperature = MAX_TEMP;
         
         if (verbose) {
-            printf("\nCurrent cost is: %lf\n", new_cost);
             if (i % 100 == 0) {
+                printf("\nCurrent cost is: %lf\n", new_cost);
                 printf("Iteration: %d\n", i);
                 printf("Temperature: %lf\n", temperature);
                 printf("Cooldown: %lf\n", COOLDOWN);
