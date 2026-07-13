@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <limits.h>
 #include <time.h>
 #include "randomness.h"
 #include "structs.h"
@@ -20,11 +21,7 @@
 
 #define DEFAULT_TEMP_SIMAN 5000
 #define DEFAULT_COOLDOWN_SIMAN 0.995
-
-typedef struct {
-    double init_temp_siman;
-    double cooldown_siman;
-}Hyperparams;
+#define DEFAULT_K_MAX 10000
 
 // does not set default name; if not supplied, exit
 int fetchFilename(char* executablePath, char* filename) {
@@ -196,6 +193,7 @@ Hyperparams fetchHyperparams(const int algoCode, const CMDArgs args) {
         if (algoCode == SIMAN_ALG) {
             hyper.init_temp_siman = args.initTemp;
             hyper.cooldown_siman = args.cooldown;
+            hyper.k_max = args.k_max;
             return hyper;
         }
 
@@ -224,6 +222,13 @@ Hyperparams fetchHyperparams(const int algoCode, const CMDArgs args) {
                                                                  DEFAULT_COOLDOWN_SIMAN,
                                                                  INFINITY,
                                                                  0);
+            hyper.k_max = (int)fetchGenericDoubleWithDefault(stdprmpt,
+                                                             "k_max",
+                                                             purpose,
+                                                             stderror,
+                                                             DEFAULT_K_MAX,
+                                                             INT_MAX,
+                                                             0);
             printf("\n");
             return hyper;
         }
@@ -259,6 +264,7 @@ CMDArgs cmdlineGetArgs(int argc, char** argv) {
                 {"target-credits", required_argument, NULL,  't'},
                 {"weekday-bad",    required_argument, NULL,  'w'},
                 {"period-bad",     required_argument, NULL,  'p'},
+                {"k-max",          required_argument, NULL,  'k'},
                 {"cooldown",       required_argument, NULL,  'c'},
                 {"temp",           required_argument, NULL,  'T'},
                 {NULL,             0,                 NULL,    0}
@@ -271,7 +277,7 @@ CMDArgs cmdlineGetArgs(int argc, char** argv) {
             // :: after a letter means optional arg
             // : after a letter means required arg
             // just the character means no arguments needed
-            int c = getopt_long(argc, argv, "-:rd:hva:t:w:p:c:T:s:", long_options, &option_index);
+            int c = getopt_long(argc, argv, "-:rd:hva:t:w:p:c:T:s:k:", long_options, &option_index);
             if (c == -1)
               break;
 
@@ -304,12 +310,13 @@ CMDArgs cmdlineGetArgs(int argc, char** argv) {
                     printf("  %s\n      %s\n", "--random-gen, -r", "uses randomly generated data; you may set seed with --seed");
                     printf("  %s\n      %s\n", "--seed=[seed], -s [seed]", "required; seeds the random processes in the program with a number");
                     printf("  %s\n      %s\n", "--algorithm=[algo], -a [algo]", "required; choose out of [greedy | simulated_annealing]");
-                    printf("      %s\n", "note: simulated_annealing also requires --cooldown and --temp");
+                    printf("      %s\n", "note: simulated_annealing also requires --cooldown, --temp, and --k-max");
                     printf("  %s\n      %s\n", "--target-credits=[credits], -t [credits]", "required; specifies target credits");
                     printf("  %s\n      %s\n", "--weekday-bad=[list], -w [list]", "comma-separated bad weekdays, e.g. Mon,Sat (as in type it out like this)");
                     printf("  %s\n      %s\n", "--period-bad=[list], -p [list]", "comma-separated bad periods, e.g. 1,2 (as in type it out like this)");
-                    printf("  %s\n      %s\n", "--cooldown=[rate], -c [rate]", "cooldown rate for simulated annealing");
-                    printf("  %s\n      %s\n", "--temp=[temp], -T [temp]", "initial temperature for simulated annealing");
+                    printf("  %s\n      %s\n", "--k-max=[iter], -k [iter]", "required; number of k iterations for simulated annealing");
+                    printf("  %s\n      %s\n", "--cooldown=[rate], -c [rate]", "required; cooldown rate for simulated annealing");
+                    printf("  %s\n      %s\n", "--temp=[temp], -T [temp]", "required; initial temperature for simulated annealing");
                     
                     args.helpFlag = 1;
                     break;
@@ -333,12 +340,14 @@ CMDArgs cmdlineGetArgs(int argc, char** argv) {
                         break;
                     }
 
-                    args.randomSeed = atoi(optarg);
-                    if (args.randomSeed < 0) {
-                        fprintf(stderr, "Random seed is >= 0! Exiting...\n");
+                    char *endptr;
+                    long seed = strtol(optarg, &endptr, 10);
+                    if (*endptr != '\0' || seed < 0) {
+                        fprintf(stderr, "Random seed must be a non-negative integer\n");
                         args.errFlag = 1;
+                        break;
                     }
-
+                    args.randomSeed = (int)seed;
                     args.randomSeedFlag = 1;
                     break;
 
@@ -386,6 +395,19 @@ CMDArgs cmdlineGetArgs(int argc, char** argv) {
                     parsePeriodList(optarg, args.periodCheck);
                     break;
                 
+                case 'k':
+                    if (optarg == NULL) {
+                        args.errFlag = 1;
+                        break;
+                    }
+                    args.k_maxSetFlag = 1;
+                    args.k_max = atoi(optarg);
+                    if (args.k_max <= 0) {
+                        fprintf(stderr, "k_max is > 0! Exiting...\n");
+                        args.errFlag = 1;
+                    }
+                    break;
+
                 case 'c':
                     if (optarg == NULL) {
                         args.errFlag = 1;
@@ -474,12 +496,16 @@ CMDArgs cmdlineGetArgs(int argc, char** argv) {
     return args;
 }
 
+// the ONLY function in the entire program allowed to mess with args
 int configureRun(int argc, char** argv, CMDArgs* args) {
     *args = cmdlineGetArgs(argc, argv);
 
     // Default 42
     if (args->randomSeedFlag == 1) srand(args->randomSeed);
-    else srand(time(NULL));
+    else {
+        args->randomSeed = (int)time(NULL);
+        srand(args->randomSeed);
+    }
 
     // First check if any error occurred
     if (args->errFlag == 1) return ERROR;
@@ -512,9 +538,9 @@ int configureRun(int argc, char** argv, CMDArgs* args) {
         strcmp(args->algorithm, "siman") == 0 ||  
         strcmp(args->algorithm, "sim_anneal") == 0) {
         args->algorithmCode = SIMAN_ALG;
-        if (args->cooldownSetFlag == 1 && args->initTempSetFlag == 1) return AUTO;
+        if (args->cooldownSetFlag == 1 && args->initTempSetFlag == 1 && args->k_maxSetFlag == 1) return AUTO;
         else {
-            fprintf(stderr, "simulated_annealing requires BOTH --cooldown and --temp to be supplied\n");
+            fprintf(stderr, "simulated_annealing requires ALL OF --cooldown, --temp, and --k-max to be supplied!\n");
             return ERROR;
         }
     }
@@ -536,6 +562,7 @@ int runAuto(const CMDArgs args) {
     // 0 here is good, 1 is bad because it returns all to main
     char filename[MAX_LENGTH];
     char random_file_name[] = "random_course_list.txt";
+    Hyperparams hyperparams = fetchHyperparams(args.algorithmCode, args);
     
     // If it's a runAuto either randomFlag OR nameFlag is on
     // We can of course be defensive here and code in a condition
@@ -560,12 +587,11 @@ int runAuto(const CMDArgs args) {
     readfile(courseList, filename);
 
     if (args.algorithmCode == GREEDY_ALG) {
-        maximizeCreditsDumb__wrapper(courseList, mastercheck);
+        maximizeCreditsDumb__wrapper(courseList, mastercheck, args.randomSeed, hyperparams);
     }
 
     else if (args.algorithmCode == SIMAN_ALG) {
-        simulatedAnnealing__wrapper(courseList, mastercheck, args.initTemp, 
-                                    args.cooldown, args.verbose);
+        simulatedAnnealing__wrapper(courseList, mastercheck, args.initTemp, args.cooldown, args.k_max, args.verbose, args.randomSeed, hyperparams);
     }
 
     else {
@@ -648,12 +674,12 @@ int runManual(char* executablePath, const CMDArgs args) {
     fillMasterCheck(mastercheck, targetCredits, weekdayCheck, periodCheck);
 
     if (algoCode == GREEDY_ALG) {
-        maximizeCreditsDumb__wrapper(courseList, mastercheck);
+        maximizeCreditsDumb__wrapper(courseList, mastercheck, args.randomSeed, hyper);
     }
 
     else if (algoCode == SIMAN_ALG) {
-        simulatedAnnealing__wrapper(courseList, mastercheck, hyper.init_temp_siman, 
-                                    hyper.cooldown_siman, args.verbose);
+        simulatedAnnealing__wrapper(courseList, mastercheck, hyper.init_temp_siman, hyper.cooldown_siman,
+                                    hyper.k_max, args.verbose, args.randomSeed, hyper);
     }
 
     else {

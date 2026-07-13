@@ -112,6 +112,8 @@ typedef struct {
     int periodCheck[NUM_PERIODS];
     int periodFlag;
 
+    int k_maxSetFlag;
+    int k_max;
     int cooldownSetFlag;
     double cooldown;
     int initTempSetFlag;
@@ -126,5 +128,11 @@ typedef struct {
     int randomSeed;
     int verbose;
 }CMDArgs;
+
+typedef struct {
+    double init_temp_siman;
+    double cooldown_siman;
+    int k_max;
+}Hyperparams;
 
 #endif

@@ -1,11 +1,14 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
 #include "chooseCourse.h"
 #include "schedule.h"
 #include "structs.h"
 #include "objective.h"
 #include "sortCoursesByCriteria.h"
 #include "debugCMD.h"
+#include "writefile.h"
+#include "timing.h"
 
 // O(nlogn) where n is number of courses
 Schedule* maximizeCreditsDumb(CourseList* courseList, MasterCheck* mastercheck) {
@@ -28,8 +31,16 @@ Schedule* maximizeCreditsDumb(CourseList* courseList, MasterCheck* mastercheck) 
     return schedule;
 }
 
-void maximizeCreditsDumb__wrapper(CourseList* courseList, MasterCheck* mastercheck) {
+void maximizeCreditsDumb__wrapper(CourseList* courseList, MasterCheck* mastercheck, int seed, const Hyperparams hyperparams) {
+    struct timespec start, end;
+    clock_gettime(CLOCK_MONOTONIC, &start);
     Schedule* schedule = maximizeCreditsDumb(courseList, mastercheck);
+    clock_gettime(CLOCK_MONOTONIC, &end);
+    
+    double elapsed = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / SEC_TO_NANOSEC;
+    double finalScore = objective(schedule, courseList, mastercheck);
+
+    addResultToFile(GREEDY_ALG, seed, hyperparams, finalScore, elapsed);
     printCourseSlotsMatrix(schedule);
     freeSchedule(schedule);
 }

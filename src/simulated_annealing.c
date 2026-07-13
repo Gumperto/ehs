@@ -10,8 +10,9 @@
 #include "structs.h"
 #include "schedule.h"
 #include "debugCMD.h"
+#include "timing.h"
+#include "writefile.h"
 
-#define MAX_ITERATIONS 10000
 #define MIN_TEMP 0.001
 #define MAX_TEMP 1000000
 
@@ -64,7 +65,7 @@ double acceptanceProbability(double current_cost, double new_cost, double temper
 }
 
 Schedule* simulatedAnnealing(CourseList* courseList, MasterCheck* mastercheck, 
-                             double INIT_TEMP, double COOLDOWN, int verbose) {
+                             double INIT_TEMP, double COOLDOWN, int k_max, int verbose) {
     double temperature = INIT_TEMP;
     double p_accept;
     double current_cost, new_cost;
@@ -76,7 +77,7 @@ Schedule* simulatedAnnealing(CourseList* courseList, MasterCheck* mastercheck,
     Schedule* current = original;
 
     // loop until temperature is cooled down totally
-    for (int i = 0; i < MAX_ITERATIONS; i++) {
+    for (int i = 0; i < k_max; i++) {
         // copy schedule into neighbor
         Schedule* neighbor = getNeighborSchedule(current, courseList);
         if (neighbor == NULL) return NULL;
@@ -121,10 +122,20 @@ Schedule* simulatedAnnealing(CourseList* courseList, MasterCheck* mastercheck,
     return current;
 }
 
-void simulatedAnnealing__wrapper(CourseList* courseList, MasterCheck* mastercheck, 
-                                 double INIT_TEMP, double COOLDOWN, int verbose) {
+void simulatedAnnealing__wrapper(CourseList* courseList, MasterCheck* mastercheck,
+                                 double INIT_TEMP, double COOLDOWN, int k_max, int verbose,
+                                 int seed, const Hyperparams hyperparams) {
+    
+    struct timespec start, end;
+    clock_gettime(CLOCK_MONOTONIC, &start);
     Schedule* schedule = simulatedAnnealing(courseList, mastercheck, INIT_TEMP, 
-                                            COOLDOWN, verbose);
+                                            COOLDOWN, k_max, verbose);
+    clock_gettime(CLOCK_MONOTONIC, &end);
+    
+    double elapsed = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / SEC_TO_NANOSEC;
+    double finalScore = objective(schedule, courseList, mastercheck);
+
+    addResultToFile(SIMAN_ALG, seed, hyperparams, finalScore, elapsed);
     printCourseSlotsMatrix(schedule);
     free(schedule);
 }
