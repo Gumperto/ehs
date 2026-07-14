@@ -5,6 +5,7 @@
 
 void random_course_list(int samples, char* random_file_name){
     FILE *fptr;
+    int never_required = 0;
     char first_word[][MAX_LENGTH] = {
         "Introduction to ",
         "Analysis of ",
@@ -90,10 +91,14 @@ void random_course_list(int samples, char* random_file_name){
                 fprintf(fptr, "%s: ", "Thu");
             } else if (day == 4){
                 fprintf(fptr, "%s: ", "Sat");
+                never_required = 1;
             } else {
                 fprintf(fptr, "%s: ", "Fri");
             }
             fprintf(fptr, "%d ", periods_considered[k]%6 + 1);
+            if(day == 5){
+                never_required = 1;
+            }
             if(k < (frequency-1)){
                 fprintf(fptr, "; ");
             }
@@ -104,10 +109,11 @@ void random_course_list(int samples, char* random_file_name){
         int credits = rand()%4 + 1;
         // Required at a 1/5 probability
         int required = 0;
-        if (requiredCap > requiredSoFar) {
+        if ((requiredCap > requiredSoFar) && (never_required == 0)) {
             requiredSoFar++;
             required = bernoulli(5);
         }
+
         fprintf(fptr, " %d, %d, ", credits, required);
 
         // Category
