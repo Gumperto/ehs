@@ -59,7 +59,7 @@ void random_course_list(int samples, char* random_file_name){
         }
 
         // Frequency
-        int frequency = rand()%3 + 1;
+        int frequency = 1;
         fprintf(fptr, "%d, ", frequency);
 
         int periods_considered[frequency];
